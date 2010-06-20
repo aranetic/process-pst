@@ -1,0 +1,3 @@
+[submodule "pstsdk"]
+	path = pstsdk
+	url = git://github.com/emk/pstsdk.git

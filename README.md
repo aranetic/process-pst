@@ -12,7 +12,7 @@ and an [EDRM XML loadfile][1] `custodian1/edrm-loadfile.xml`.  Any emails
 found in `custodian1` will be converted to RFC822 format and stored in
 `custodian1`, and any attachments will be extracted.
 
-We also interested in supporting simple text extraction and other loadfile
+We are also interested in supporting simple text extraction and other loadfile
 formats, including Concordance- and Summation-compatible loadfiles.  Your
 patches are extremely welcome!
 
@@ -32,13 +32,14 @@ legal community.
 ## License
 
 This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License as published by
+under the terms of the GNU Affero General Public License (the "License") as published by
 the Free Software Foundation, either version 3 of the License, or (at your
 option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+This program is distributed in the hope that it will be useful, but it is provided
+on an "AS-IS" basis and WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT.  See the GNU Affero General Public
 License for more details.
 
 You should have received a copy of the GNU Affero General Public License

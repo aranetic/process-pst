@@ -118,8 +118,36 @@ prop_id_name_info prop_name_map[] = {
     { 0x65e3, L"PidTagPredecessorChangeList" },
     //{ 0x6610, L"" },
     //{ 0x6619, L"" },  // Not PidTagUserEntryId, I don't think.
+
     { 0, NULL }
 };
+
+/* ps_common: None of these are currently interesting.
+prop_id_name_info common_header_map[] = {
+    { 0x8501, L"PidLidReminderDelta" },
+    { 0x8502, L"PidLidReminderTime" },
+    { 0x8503, L"PidLidReminderSet" },
+    { 0x8506, L"PidLidPrivate" },
+    { 0x850e, L"PidLidAgingDontAgeMe" },
+    { 0x8510, L"PidLidSideEffects" },
+    { 0x8514, L"PidLidSmartNoAttach" },
+    { 0x8516, L"PidLidCommonStart" },
+    { 0x8517, L"PidLidCommonEnd" },
+    { 0x8518, L"PidLidTaskMode" },
+    { 0x8530, L"PidLidFlagRequest" },
+    { 0x8552, L"PidLidCurrentVersion" },
+    { 0x8554, L"PidLidCurrentVersionName" },
+    { 0x8560, L"PidLidReminderSignalTime" },
+    { 0x8580, L"PidLidInternetAccountName" },
+    { 0x8581, L"PidLidInternetAccountStamp" },
+    { 0x8582, L"PidLidUseTnef" },
+    //{ 0x8596, L"" },
+    { 0x85a0, L"PidLidToDoOrdinalDate" },
+    { 0x85a1, L"PidLidToDoSubOrdinal" },
+    { 0x85a4, L"PidLidToDoTitle" },
+    { 0, NULL }
+};
+*/
 
 const guid ps_common = { 0x62008, 0, 0, { 0xc0, 0, 0, 0, 0, 0, 0, 0x46 } };
 const guid ps_internet_headers = { 0x20386, 0, 0, { 0xc0, 0, 0, 0, 0, 0, 0, 0x46 } };

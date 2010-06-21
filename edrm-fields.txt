@@ -1,0 +1,34 @@
+Standard EDRM fields, and where we can probably find them.
+
+From     PidTagSentRepresenting* ("From")
+         PidTagSender* ("Sender")
+To       (Use pstsdk)
+CC       (Use pstsdk)
+BCC      (Use pstsdk)
+
+Subject  (Use pstsdk)
+
+Header   PidTagTransportMessageHeaders
+
+DateSent      PidTagClientSubmitTime (judging from RFC822 headers, UTC)
+              RFC822 headers, with time zone
+DateReceived  PidTagMessageDeliveryTime (judging from RFC822 headers, UTC)
+              RFC822 headers, with time zone
+
+HasAttachments   (Use pstsdk)
+AttachmentCount  (Use pstsdk)
+AttachmentNames  (Use pstsdk)
+
+ReadFlag         PR_MESSAGE_FLAGS MSGFLAG_READ 0x00000001
+ImportanceFlag   PidTagPriority == PRIO_URGENT
+
+MessageClass (Outlook)  PidTagMessageClass
+FlagStatus (Outlook)    PidTagFlagStatus (flwupMarked, flwupComplete)
+
+Plain text       PidTagBody
+HTML             PidTagBodyHtml
+RTF              PidTagRtfCompressed
+
+
+
+What about PR_MESSAGE_FLAGS & MSGFLAG_UNSENT?

@@ -9,12 +9,17 @@ wstring string_to_wstring(const string &str) {
     return wstring(str.begin(), str.end());
 }
 
-void process_message(const message &m) {
+template <typename R, typename T, typename D>
+R prop_or(const T &obj, R (T::*pmf)() const, D default_value) {
     try {
-        wcout << m.get_subject() << endl;
+        return (obj.*pmf)();
     } catch (key_not_found<prop_id> &) {
-        wcout << L"(No subject)" << endl;
+        return default_value;
     }
+}
+
+void process_message(const message &m) {
+    wcout << prop_or(m, &message::get_subject, L"(No subject)") << endl;
 }
 
 void process_folder(const folder &f) {

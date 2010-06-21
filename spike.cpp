@@ -1,8 +1,11 @@
 #include <iostream>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <pstsdk/pst.h>
 
 using namespace std;
+using namespace std::placeholders;
 using namespace pstsdk;
+using namespace boost::posix_time;
 
 wstring string_to_wstring(const string &str) {
     // TODO: We need to call mbstowcs here.
@@ -16,6 +19,64 @@ R prop_or(const T &obj, R (T::*pmf)() const, D default_value) {
     } catch (key_not_found<prop_id> &) {
         return default_value;
     }
+}
+
+void process_property(const property_bag &bag, prop_id id) {
+    wcout << L"  " << id << ": ";
+    prop_type type(bag.get_prop_type(id));
+    switch (type) {
+        case prop_type_null:
+            wcout << "null";
+            break;
+
+        case prop_type_short:
+            wcout << bag.read_prop<boost::int16_t>(id);
+            break;
+
+        case prop_type_long:
+            wcout << bag.read_prop<boost::int32_t>(id);
+            break;
+
+        case prop_type_float:
+            wcout << bag.read_prop<float>(id);
+            break;
+
+        case prop_type_double:
+            wcout << bag.read_prop<double>(id);
+            break;
+
+        case prop_type_boolean:
+            wcout << (bag.read_prop<bool>(id) ? L"true" : L"false");
+            break;
+
+        case prop_type_longlong:
+            wcout << bag.read_prop<boost::int64_t>(id);
+            break;
+
+        case prop_type_string:
+        case prop_type_wstring:
+            wcout << bag.read_prop<wstring>(id);
+            break;
+
+        case prop_type_apptime:
+        case prop_type_systime:
+            wcout << from_time_t(bag.read_time_t_prop(id));
+            break;
+
+        case prop_type_binary:
+            wcout << L"(binary data)";
+            break;
+
+        default:
+            wcout << L"(Unsupported value of type " << type << L")";
+            break;
+    }
+    wcout << endl;
+}
+
+void process_property_bag(const property_bag &bag) {
+    std::vector<prop_id> ids(bag.get_prop_list());
+    for_each(ids.begin(), ids.end(), bind(process_property, bag, _1));
 }
 
 void process_recipient(const recipient &r) {
@@ -46,6 +107,8 @@ void process_message(const message &m) {
         for_each(m.recipient_begin(), m.recipient_end(), process_recipient);
     if (m.get_attachment_count() > 0)
         for_each(m.attachment_begin(), m.attachment_end(), process_attachment);
+
+    process_property_bag(m.get_property_bag());
 }
 
 void process_folder(const folder &f) {

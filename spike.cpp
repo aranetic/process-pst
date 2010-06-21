@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <pstsdk/pst.h>
 
@@ -12,6 +13,16 @@ wstring string_to_wstring(const string &str) {
     return wstring(str.begin(), str.end());
 }
 
+wstring property_name(prop_id id) {
+    if (id >= 0x8000) {
+        return L"(named property)";
+    } else {
+        ostringstream out;
+        out << "0x" << hex << setw(8) << setfill('0') << id;
+        return string_to_wstring(out.str());
+    }
+}
+
 template <typename R, typename T, typename D>
 R prop_or(const T &obj, R (T::*pmf)() const, D default_value) {
     try {
@@ -22,7 +33,7 @@ R prop_or(const T &obj, R (T::*pmf)() const, D default_value) {
 }
 
 void process_property(const property_bag &bag, prop_id id) {
-    wcout << L"  " << id << ": ";
+    wcout << L"  " << property_name(id) << ": ";
     prop_type type(bag.get_prop_type(id));
     switch (type) {
         case prop_type_null:

@@ -86,20 +86,74 @@ prop_id_name_info prop_name_map[] = {
     { 0, NULL }
 };
 
+const guid ps_common_headers = { 0x62008, 0, 0, { 0xc0, 0, 0, 0, 0, 0, 0, 0x46 } };
+const guid ps_internet_headers = { 0x20386, 0, 0, { 0xc0, 0, 0, 0, 0, 0, 0, 0x46 } };
+const guid ps_task = { 0x62003, 0, 0, { 0xc0, 0, 0, 0, 0, 0, 0, 0x46 } };
+const guid ps_messaging = { 0x41f28f13, static_cast<ushort>(0x83f4), 0x4114, { 0xa5, 0x84, 0xee, 0xdb, 0x5a, 0x6b, 0x0b, 0xff } };
+const guid ps_appointment = { 0x62002, 0, 0, { 0xc0, 0, 0, 0, 0, 0, 0, 0x46 } };
+
+bool operator==(const guid g1, const guid g2) {
+    return (g1.data1 == g2.data1 &&
+            g1.data2 == g2.data2 &&
+            g1.data3 == g2.data3 &&
+            memcmp(g1.data4, g2.data4, 8) == 0);
+}
+
+wstring guid_name(guid g) {
+    if (g == ps_none) {
+        return L"ps_none";
+    } else if (g == ps_mapi) {
+        return L"ps_mapi";
+    } else if (g == ps_public_strings) {
+        return L"ps_public_strings";
+    } else if (g == ps_common_headers) {
+        return L"ps_common_headers";
+    } else if (g == ps_internet_headers) {
+        return L"ps_internet_headers";
+    } else if (g == ps_task) {
+        return L"ps_task";
+    } else if (g == ps_messaging) {
+        return L"ps_messaging";
+    } else if (g == ps_appointment) {
+        return L"ps_appointment";
+    } else {
+        wostringstream out;
+        out << hex
+            << setw(8) << setfill(L'0') << g.data1 << L"-"
+            << setw(4) << setfill(L'0') << g.data2 << L"-"
+            << setw(4) << setfill(L'0') << g.data3 << L"-";
+        for (size_t i = 0; i < 8; i++)
+            out << setw(2) << setfill(L'0') << g.data4[i];
+        return out.str();
+    }
+}
+
+shared_db_ptr g_db;
+
 wstring property_name(prop_id id) {
     if (id >= 0x8000) {
-        return L"(named property)";
+        name_id_map prop_names(g_db);
+        if (prop_names.prop_id_exists(id)) {
+            named_prop prop(prop_names.lookup(id));
+            wostringstream out;
+            out << guid_name(prop.get_guid()) << L" ";
+            if (prop.is_string())
+                out << prop.get_name();
+            else
+                out << L"0x" << hex << setw(4) << setfill(L'0')
+                    << prop.get_id();
+            return out.str();
+        }
     } else {
         // Look this up in our map of known names.
-        for (prop_id_name_info *i = prop_name_map; i->name != NULL; i++) {
+        for (prop_id_name_info *i = prop_name_map; i->name != NULL; i++)
             if (i->id == id)
                 return i->name;
-        }
-        
-        ostringstream out;
-        out << "0x" << hex << setw(4) << setfill('0') << id;
-        return string_to_wstring(out.str());
     }
+        
+    ostringstream out;
+    out << "0x" << hex << setw(4) << setfill('0') << id;
+    return string_to_wstring(out.str());
 }
 
 template <typename R, typename T, typename D>
@@ -217,5 +271,6 @@ int main(int argc, char **argv) {
 
     // Open our pst.
     pst pst_db(string_to_wstring(pst_path));
+    g_db = pst_db.get_db();
     process_folder(pst_db.open_root_folder());
 }

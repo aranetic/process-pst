@@ -35,6 +35,7 @@ void process_attachment(const attachment &a) {
     wcout << "  Attachment: "
           << prop_or(a, &attachment::get_filename, L"(no filename)") << " ("
           << prop_or(a, &attachment::size, 31337) << " bytes)"
+          << (a.is_message() ? " SUBMESSAGE" : "")
           << endl;
 }
 

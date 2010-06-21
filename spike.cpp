@@ -13,12 +13,38 @@ wstring string_to_wstring(const string &str) {
     return wstring(str.begin(), str.end());
 }
 
+struct prop_id_name_info {
+    prop_id id;
+    const wchar_t *name;
+};
+
+prop_id_name_info prop_name_map[] = {
+    { 0x0002, L"PidTagAlternateRecipientAllowed" },
+    { 0x0017, L"PidTagImportance" },
+    { 0x001a, L"PidTagMessageClass" },
+    { 0x0023, L"PidTagOriginatorDeliveryReportRequested" },
+    { 0x0026, L"PidTagPriority" },
+    { 0x0029, L"PidTagReadReceiptRequested" },
+    { 0x002b, L"PidTagRecipientReassignmentProhibited" },
+    { 0x002e, L"PidTagOriginalSensitivity" },
+    { 0x0036, L"PidTagSensitivity" },
+    { 0x0037, L"PidTagSubject" },
+    { 0x0039, L"PidTagClientSubmitTime" },
+    { 0, NULL }
+};
+
 wstring property_name(prop_id id) {
     if (id >= 0x8000) {
         return L"(named property)";
     } else {
+        // Look this up in our map of known names.
+        for (prop_id_name_info *i = prop_name_map; i->name != NULL; i++) {
+            if (i->id == id)
+                return i->name;
+        }
+        
         ostringstream out;
-        out << "0x" << hex << setw(8) << setfill('0') << id;
+        out << "0x" << hex << setw(4) << setfill('0') << id;
         return string_to_wstring(out.str());
     }
 }

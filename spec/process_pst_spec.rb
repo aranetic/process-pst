@@ -1,6 +1,10 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
+require 'assert2/xpath'
+
 describe "process-pst" do
+  include Test::Unit::Assertions # for assert2/xpath
+
   after do
     rm_rf(build_path("out"))
   end
@@ -19,12 +23,23 @@ describe "process-pst" do
       @result = process_pst("pstsdk/test/sample1.pst", "out")
     end
 
+    def loadfile
+      build_path("out/edrm-loadfile.xml")
+    end
+
     it "should succeed if passed valid arguments" do
       @result.should == true
     end
 
     it "should create a directory and edrm loadfile" do
-      File.exist?(build_path("out/edrm-loadfile.xml")).should == true
+      File.exist?(loadfile).should == true
+    end
+
+    it "should generate a valid EDRM loadfile" do
+      _assert_xml(File.read(loadfile))
+      assert do
+        xpath("/Root[@DataInterchangeType='Update']/Batch/Documents")
+      end
     end
   end
 end

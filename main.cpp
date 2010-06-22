@@ -25,15 +25,24 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    // Create an empty loadfile.  We'll fill this in shortly.
+    // Refuse to run if our output directory exists.
     if (exists(output_directory_path)) {
         wcerr << L"Will not overwrite existing "
               << string_to_wstring(output_directory_path.string()) << endl;
         exit(1);
     }
+
+    // Create an empty loadfile.  We'll fill this in shortly.
     create_directory(output_directory_path);
     path loadfile_path(output_directory_path / "edrm-loadfile.xml");
     ofstream file(loadfile_path.string());
+    file << "<?xml version='1.0' encoding='UTF-8'?>" << endl
+         << "<Root DataInterchangeType='Update'>" << endl
+         << "  <Batch>" << endl
+         << "    <Documents>" << endl
+         << "    </Documents>" << endl
+         << "  </Batch>" << endl
+         << "</Root>" << endl;
     file.close();
 
     return 0;

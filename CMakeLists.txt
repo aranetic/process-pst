@@ -85,6 +85,9 @@ set_property(TEST NoSuchPstTest PROPERTY PASS_REGULAR_EXPRESSION "Could not open
 #--------------------------------------------------------------------------
 #  Command-line executable tests (driven by Ruby)
 
-file(GLOB SpecFiles spec/*_spec.rb)
-add_test(NAME CommandLineTests COMMAND bundle exec spec ${SpecFiles})
-set_property(TEST CommandLineTests PROPERTY ENVIRONMENT "SOURCE_ROOT=${PROJECT_SOURCE_DIR}" "BUILD_ROOT=${PROJECT_BINARY_DIR}")
+file(GLOB RubySpecFiles spec/*_spec.rb)
+foreach (spec ${RubySpecFiles})
+  get_filename_component(TestName ${spec} NAME_WE)
+  add_test(NAME ${TestName} COMMAND bundle exec spec ${spec})
+  set_property(TEST ${TestName} PROPERTY ENVIRONMENT "SOURCE_ROOT=${PROJECT_SOURCE_DIR}" "BUILD_ROOT=${PROJECT_BINARY_DIR}")
+endforeach()

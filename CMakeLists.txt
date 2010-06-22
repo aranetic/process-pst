@@ -28,9 +28,14 @@ endif()
 # because we don't necessarily know the encoding of wchar_t.
 find_library(ICONV_LIBRARY NAMES iconv)
 
+# Our C++ source files, except for main.cpp.
+add_library(ProcessPstLib utilities.cpp)
+
 # Link our executables.
 add_executable(spike spike.cpp)
 add_executable(process-pst main.cpp)
+target_link_libraries(process-pst ProcessPstLib)
+
 if(ICONV_LIBRARY)
   target_link_libraries(spike ${ICONV_LIBRARY})
   target_link_libraries(process-pst ${ICONV_LIBRARY})
@@ -56,6 +61,7 @@ create_test_sourcelist(CppTestsFiles CppTests.cpp utilities_tests.cpp)
 
 # Build a single test executable for all our C++ libraries.
 add_executable(CppTests ${CppTestsFiles})
+target_link_libraries(CppTests ProcessPstLib)
 if(ICONV_LIBRARY)
   target_link_libraries(CppTests ${ICONV_LIBRARY})
 endif()
@@ -68,4 +74,3 @@ foreach (test ${TestsToRun})
   get_filename_component(TestName ${test} NAME_WE)
   add_test(NAME ${TestName} COMMAND CppTests ${TestName})
 endforeach()
-

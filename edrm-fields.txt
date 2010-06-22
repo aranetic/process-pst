@@ -20,7 +20,7 @@ AttachmentCount  (Use pstsdk)
 AttachmentNames  (Use pstsdk)
 
 ReadFlag         PR_MESSAGE_FLAGS MSGFLAG_READ 0x00000001
-ImportanceFlag   PidTagPriority == PRIO_URGENT
+ImportanceFlag   PidTagPriority == PRIO_URGENT? PidTagImportance?
 
 MessageClass (Outlook)  PidTagMessageClass
 FlagStatus (Outlook)    PidTagFlagStatus (flwupMarked, flwupComplete)
@@ -30,5 +30,6 @@ HTML             PidTagBodyHtml
 RTF              PidTagRtfCompressed
 
 
+What about threads?
 
 What about PR_MESSAGE_FLAGS & MSGFLAG_UNSENT?

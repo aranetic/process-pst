@@ -8,4 +8,9 @@ describe "process-pst" do
   it "should succeed if passed valid arguments" do
     process_pst("pstsdk/test/sample1.pst", "sample1-out").should == true
   end
+
+  it "should create a directory and edrm loadfile" do
+    process_pst("pstsdk/test/sample1.pst", "sample1-out")
+    File.exist?(build_path("sample1-out/edrm-loadfile.xml")).should == true
+  end
 end

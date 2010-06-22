@@ -9,6 +9,11 @@ describe "process-pst" do
     process_pst("nosuch.pst", "out").should == false
   end
 
+  it "should fail if the output directory exists" do
+    mkdir_p(build_path("out"))
+    process_pst("pstsdk/test/sample1.pst", "out").should == false
+  end
+
   context "sample1.pst" do
     before do
       @result = process_pst("pstsdk/test/sample1.pst", "out")

@@ -20,17 +20,21 @@ int main(int argc, char **argv) {
     // Open our PST.
     try {
         pst pst_db(string_to_wstring(pst_path));
-
-        // Create an empty loadfile.  We'll fill this in shortly.
-        create_directory(output_directory_path);
-        path loadfile_path(output_directory_path / "edrm-loadfile.xml");
-        ofstream file(loadfile_path.string());
-        file.close();
-
     } catch (exception &e) {
-        wcerr << L"Could not open PST: " << string_to_wstring(e.what());
+        wcerr << L"Could not open PST: " << string_to_wstring(e.what()) << endl;
         exit(1);
     }
+
+    // Create an empty loadfile.  We'll fill this in shortly.
+    if (exists(output_directory_path)) {
+        wcerr << L"Will not overwrite existing "
+              << string_to_wstring(output_directory_path.string()) << endl;
+        exit(1);
+    }
+    create_directory(output_directory_path);
+    path loadfile_path(output_directory_path / "edrm-loadfile.xml");
+    ofstream file(loadfile_path.string());
+    file.close();
 
     return 0;
 }

@@ -51,6 +51,14 @@ set_property(TEST UsageExitValueTest PROPERTY WILL_FAIL true)
 add_test(NAME UsageTest COMMAND process-pst)
 set_property(TEST UsageTest PROPERTY PASS_REGULAR_EXPRESSION "^Usage:")
 
+add_test(NAME ValidArgumentsTest COMMAND process-pst pstsdk/test/sample1.pst sample1-out)
+
+add_test(NAME NoSuchPstExitValueTest COMMAND process-pst nosuch.pst sample1-out)
+set_property(TEST NoSuchPstExitValueTest PROPERTY WILL_FAIL true)
+
+add_test(NAME NoSuchPstTest COMMAND process-pst nosuch.pst sample1-out)
+set_property(TEST NoSuchPstTest PROPERTY PASS_REGULAR_EXPRESSION "Could not open PST: ")
+
 
 #--------------------------------------------------------------------------
 #  C++ module tests

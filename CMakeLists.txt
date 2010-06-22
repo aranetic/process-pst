@@ -19,7 +19,7 @@ endif()
 
 # Make sure we have Boost.
 include(FindBoost)
-find_package(Boost 1.42.0 REQUIRED)
+find_package(Boost 1.42.0 COMPONENTS system filesystem REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
@@ -34,7 +34,7 @@ add_library(ProcessPstLib utilities.cpp)
 # Link our executables.
 add_executable(spike spike.cpp)
 add_executable(process-pst main.cpp)
-target_link_libraries(process-pst ProcessPstLib)
+target_link_libraries(process-pst ProcessPstLib ${Boost_LIBRARIES})
 
 if(ICONV_LIBRARY)
   target_link_libraries(spike ${ICONV_LIBRARY})

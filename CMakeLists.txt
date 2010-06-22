@@ -47,7 +47,7 @@ endif()
 
 # Create list of C++ files containing unit tests.  CppTests.cpp will be
 # the generated driver.
-create_test_sourcelist(CppTestsFiles CppTests.cpp utilities_tests.cpp)
+create_test_sourcelist(CppTestsFiles CppTests.cpp utilities_spec.cpp)
 
 # Build a single test executable for all our C++ libraries.
 add_executable(CppTests ${CppTestsFiles})

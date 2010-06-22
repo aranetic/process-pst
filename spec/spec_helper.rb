@@ -2,6 +2,8 @@ require 'rubygems'
 require 'bundler'
 require 'fileutils'
 
+include FileUtils
+
 Bundler.setup(:default, :development)
 
 require 'spec'

@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe "process-pst" do
   after do
-    FileUtils.rm_rf(build_path("out"))
+    rm_rf(build_path("out"))
   end
 
   it "should fail if passed invalid arguments" do

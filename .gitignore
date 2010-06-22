@@ -2,5 +2,8 @@
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
+CTestTestfile.cmake
 Makefile
+Testing
 /spike
+/process-pst

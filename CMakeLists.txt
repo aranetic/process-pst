@@ -38,7 +38,7 @@ endif()
 
 
 #--------------------------------------------------------------------------
-#  Command-executable tests
+#  Command-line executable tests
 
 add_test(NAME UsageExitValueTest COMMAND process-pst)
 set_property(TEST UsageExitValueTest PROPERTY WILL_FAIL true)

@@ -7,3 +7,5 @@ Makefile
 Testing
 /spike
 /process-pst
+/CppTests.cpp
+/CppTests

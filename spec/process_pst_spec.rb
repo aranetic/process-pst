@@ -37,8 +37,9 @@ describe "process-pst" do
 
     it "should generate a valid EDRM loadfile" do
       _assert_xml(File.read(loadfile))
-      assert do
-        xpath("/Root[@DataInterchangeType='Update']/Batch/Documents")
+      xpath("/Root[@DataInterchangeType='Update']/Batch") do
+        xpath("./Documents") { true }
+        xpath("./Relationships") { true }
       end
     end
   end

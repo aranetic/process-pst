@@ -41,6 +41,8 @@ int main(int argc, char **argv) {
          << "  <Batch>" << endl
          << "    <Documents>" << endl
          << "    </Documents>" << endl
+         << "    <Relationships>" << endl
+         << "    </Relationships>" << endl
          << "  </Batch>" << endl
          << "</Root>" << endl;
     file.close();

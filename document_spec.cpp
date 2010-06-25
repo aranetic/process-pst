@@ -10,6 +10,16 @@ void document_should_have_a_zero_arg_constructor() {
     (void) d;
 }
 
+void document_should_have_an_id_a_type_and_a_content_type() {
+    document d;
+    d.set_id(L"DOC1").set_type(document::message);
+    assert(L"DOC1" == d.id());
+    assert(document::message == d.type());
+
+    d.set_content_type(L"message/rfc822");
+    assert(L"message/rfc822" == d.content_type());
+}
+
 void document_tags_should_be_accessible_using_subscript_operator() {
     document d;
     d[L"#Subject"] = wstring(L"Hello!");
@@ -25,6 +35,8 @@ void document_tags_should_default_to_boost_any_empty_nonexistent_tag() {
 
 int document_spec(int argc, char **argv) {
     document_should_have_a_zero_arg_constructor();
+    document_should_have_an_id_a_type_and_a_content_type();
+
     document_tags_should_be_accessible_using_subscript_operator();
     document_tags_should_default_to_boost_any_empty_nonexistent_tag();
 

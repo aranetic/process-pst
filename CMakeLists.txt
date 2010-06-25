@@ -29,7 +29,7 @@ endif()
 find_library(ICONV_LIBRARY NAMES iconv)
 
 # Our C++ source files, except for main.cpp.
-add_library(ProcessPstLib utilities.cpp)
+add_library(ProcessPstLib utilities.cpp document.cpp)
 
 # Link our executables.
 add_executable(spike spike.cpp)
@@ -47,7 +47,8 @@ endif()
 
 # Create list of C++ files containing unit tests.  CppTests.cpp will be
 # the generated driver.
-create_test_sourcelist(CppTestsFiles CppTests.cpp utilities_spec.cpp)
+create_test_sourcelist(CppTestsFiles CppTests.cpp
+                       utilities_spec.cpp document_spec.cpp)
 
 # Build a single test executable for all our C++ libraries.
 add_executable(CppTests ${CppTestsFiles})

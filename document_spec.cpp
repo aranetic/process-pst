@@ -80,7 +80,7 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     assert(false == any_cast<bool>(d[L"#ReadFlag"]));
     assert(false == any_cast<bool>(d[L"#ImportanceFlag"]));
     assert(L"IPM.Note" == any_cast<wstring>(d[L"#MessageClass"]));
-    // #FlagStatus
+    assert(d[L"#FlagStatus"].empty());
 }
 
 void document_from_message_should_mark_read_messages() {
@@ -97,6 +97,14 @@ void document_from_message_should_mark_important_messages() {
     assert(true == any_cast<bool>(d[L"#ImportanceFlag"]));
 }
 
+void document_from_message_should_include_flag_status() {
+    pst test_pst(L"test_data/flags_jane_doe.pst");
+    message m(find_by_subject(test_pst, L"Needs response"));
+    document d(m);
+    assert(2 == any_cast<int32_t>(d[L"#FlagStatus"]));
+    
+}
+
 int document_spec(int argc, char **argv) {
     document_should_have_a_zero_arg_constructor();
     document_should_have_an_id_a_type_and_a_content_type();
@@ -107,6 +115,7 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_fill_in_basic_edrm_data();
     document_from_message_should_mark_read_messages();
     document_from_message_should_mark_important_messages();
+    document_from_message_should_include_flag_status();
 
     return 0;
 }

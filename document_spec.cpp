@@ -77,10 +77,17 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     assert(from_iso_string("20100624T191619Z") ==
            any_cast<ptime>(d[L"#DateReceived"]));
     // #HasAttachments, #AttachmentCount, #AttachmentNames
-    // #ReadFlag
+    assert(false == any_cast<bool>(d[L"#ReadFlag"]));
     // #ImportanceFlag
     // #MessageClass
     // #FlagStatus
+}
+
+void document_from_message_should_mark_read_messages() {
+    pst test_pst(L"test_data/flags_jane_doe.pst");
+    message m(find_by_subject(test_pst, L"Needed a response, and has one"));
+    document d(m);
+    assert(true == any_cast<bool>(d[L"#ReadFlag"]));
 }
 
 int document_spec(int argc, char **argv) {
@@ -91,6 +98,7 @@ int document_spec(int argc, char **argv) {
     document_tags_should_default_to_boost_any_empty();
 
     document_from_message_should_fill_in_basic_edrm_data();
+    document_from_message_should_mark_read_messages();
 
     return 0;
 }

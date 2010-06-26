@@ -26,6 +26,7 @@ private:
 public:
     document() : m_type(unknown) {}
     document(const pstsdk::message &m);
+    document(const pstsdk::attachment &a);
 
     std::wstring id() const { return m_id; }
     document &set_id(const std::wstring &id) { m_id = id; return *this; }

@@ -55,6 +55,20 @@ document::document(const pstsdk::message &m) {
         (*this)[L"#FlagStatus"] = props.read_prop<int32_t>(0x1090);
 }
 
+document::document(const pstsdk::attachment &a) {
+    set_type(document::file);
+    
+    wstring filename(a.get_filename());
+    wstring extension;
+    wstring::size_type dotpos(filename.rfind(L'.'));
+    if (dotpos != wstring::npos)
+        extension = filename.substr(dotpos + 1, wstring::npos);
+ 
+    (*this)[L"#FileName"] = filename;
+    (*this)[L"#FileExtension"] = extension;
+    (*this)[L"#FileSize"] = uint64_t(a.size());
+}
+
 any &document::operator[](const wstring &key) {
     return m_tags[key];
 }

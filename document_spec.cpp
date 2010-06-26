@@ -102,7 +102,21 @@ void document_from_message_should_include_flag_status() {
     message m(find_by_subject(test_pst, L"Needs response"));
     document d(m);
     assert(2 == any_cast<int32_t>(d[L"#FlagStatus"]));
-    
+}
+
+void document_from_attachment_should_fill_in_basic_edrm_data() {
+    pst test_pst(L"pstsdk/test/sample1.pst");
+    message m(find_by_subject(test_pst, L"Here is a sample message"));
+    document d(*m.attachment_begin());
+
+    // DocId
+    assert(document::file == d.type());
+    // MimeType
+    assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#FileName"]));
+    assert(L"jpg" == any_cast<wstring>(d[L"#FileExtension"]));
+    assert(96808 == any_cast<uint64_t>(d[L"#FileSize"]));
+    // Unsupported: #DateCreated, #DateAccessed, #DateModified, #DatePrinted
+    // (plus Microsoft Office metadata, but that's not our problem for now)
 }
 
 int document_spec(int argc, char **argv) {
@@ -117,5 +131,7 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_mark_important_messages();
     document_from_message_should_include_flag_status();
 
+    document_from_attachment_should_fill_in_basic_edrm_data();
+    
     return 0;
 }

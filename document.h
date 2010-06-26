@@ -5,6 +5,8 @@
 #include <string>
 #include <boost/any.hpp>
 
+namespace pstsdk { class message; }
+
 /// An EDRM Document representing either a message or an ordinary file.
 class document {
 public:
@@ -21,6 +23,9 @@ private:
     std::map<std::wstring, boost::any> m_tags;
 
 public:
+    document() {}
+    document(const pstsdk::message &m);
+
     std::wstring id() const { return m_id; }
     document &set_id(const std::wstring &id) { m_id = id; return *this; }
 

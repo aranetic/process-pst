@@ -28,13 +28,13 @@ document::document(const pstsdk::message &m) {
     if (has_prop(m, &message::get_subject))
         (*this)[L"#Subject"] = wstring(m.get_subject());
 
-    if (props.prop_exists(0x007d))
+    if (props.prop_exists(0x007d)) // PidTagTransportMessageHeaders
         (*this)[L"#Header"] = props.read_prop<wstring>(0x007d);
 
-    if (props.prop_exists(0x0039))
+    if (props.prop_exists(0x0039)) // PidTagClientSubmitTime
         (*this)[L"#DateSent"] = from_time_t(props.read_time_t_prop(0x0039));
 
-    if (props.prop_exists(0x0e06))
+    if (props.prop_exists(0x0e06)) // PidTagMessageDeliveryTime
         (*this)[L"#DateReceived"] = from_time_t(props.read_time_t_prop(0x0e06));
 }
 

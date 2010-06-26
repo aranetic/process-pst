@@ -60,7 +60,22 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     message m(find_by_subject(test_pst, L"Unread email (do not open)"));
     document d(m);
 
+    // DocId
+    // DocType
+    // MimeType
+    // #From (From and Sender?)
+    // #To
+    // #CC
+    // #BCC
     assert(L"Unread email (do not open)" == any_cast<wstring>(d[L"#Subject"]));
+    // #Header
+    // #DateSent
+    // #DateReceived
+    // #HasAttachments, #AttachmentCount, #AttachmentNames
+    // #ReadFlag
+    // #ImportanceFlag
+    // #MessageClass
+    // #FlagStatus
 }
 
 int document_spec(int argc, char **argv) {

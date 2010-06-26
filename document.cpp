@@ -1,8 +1,11 @@
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <pstsdk/pst.h>
+
 #include "document.h"
 
 using namespace std;
 using boost::any;
+using namespace boost::posix_time;
 using namespace pstsdk;
 
 namespace {
@@ -27,6 +30,12 @@ document::document(const pstsdk::message &m) {
 
     if (props.prop_exists(0x007d))
         (*this)[L"#Header"] = props.read_prop<wstring>(0x007d);
+
+    if (props.prop_exists(0x0039))
+        (*this)[L"#DateSent"] = from_time_t(props.read_time_t_prop(0x0039));
+
+    if (props.prop_exists(0x0e06))
+        (*this)[L"#DateReceived"] = from_time_t(props.read_time_t_prop(0x0e06));
 }
 
 any &document::operator[](const wstring &key) {

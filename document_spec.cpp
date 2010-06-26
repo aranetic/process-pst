@@ -1,11 +1,14 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <pstsdk/pst.h>
+
 #include "document.h"
 
 using namespace std;
 using boost::any_cast;
+using namespace boost::posix_time;
 using namespace pstsdk;
 
 bool has_subject(const message &m, const wstring &subject) {
@@ -69,8 +72,10 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     // #BCC
     assert(L"Unread email (do not open)" == any_cast<wstring>(d[L"#Subject"]));
     assert(L"Return-Path:" == any_cast<wstring>(d[L"#Header"]).substr(0, 12));
-    // #DateSent
-    // #DateReceived
+    assert(from_iso_string("20100624T191617Z") ==
+           any_cast<ptime>(d[L"#DateSent"]));
+    assert(from_iso_string("20100624T191619Z") ==
+           any_cast<ptime>(d[L"#DateReceived"]));
     // #HasAttachments, #AttachmentCount, #AttachmentNames
     // #ReadFlag
     // #ImportanceFlag

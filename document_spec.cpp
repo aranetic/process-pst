@@ -78,7 +78,7 @@ void document_from_message_should_fill_in_basic_edrm_data() {
            any_cast<ptime>(d[L"#DateReceived"]));
     // #HasAttachments, #AttachmentCount, #AttachmentNames
     assert(false == any_cast<bool>(d[L"#ReadFlag"]));
-    // #ImportanceFlag
+    assert(false == any_cast<bool>(d[L"#ImportanceFlag"]));
     // #MessageClass
     // #FlagStatus
 }
@@ -90,6 +90,13 @@ void document_from_message_should_mark_read_messages() {
     assert(true == any_cast<bool>(d[L"#ReadFlag"]));
 }
 
+void document_from_message_should_mark_important_messages() {
+    pst test_pst(L"test_data/flags_jane_doe.pst");
+    message m(find_by_subject(test_pst, L"This email is important!"));
+    document d(m);
+    assert(true == any_cast<bool>(d[L"#ImportanceFlag"]));
+}
+
 int document_spec(int argc, char **argv) {
     document_should_have_a_zero_arg_constructor();
     document_should_have_an_id_a_type_and_a_content_type();
@@ -99,6 +106,7 @@ int document_spec(int argc, char **argv) {
 
     document_from_message_should_fill_in_basic_edrm_data();
     document_from_message_should_mark_read_messages();
+    document_from_message_should_mark_important_messages();
 
     return 0;
 }

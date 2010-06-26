@@ -41,6 +41,10 @@ document::document(const pstsdk::message &m) {
     if (props.prop_exists(0x0e07)) // PidTagMessageFlags
         (*this)[L"#ReadFlag"] =
             (props.read_prop<int32_t>(0x0e07) & 0x1) ? true : false;
+
+    if (props.prop_exists(0x0017)) // PidTagImportance
+        (*this)[L"#ImportanceFlag"] =
+            (props.read_prop<int32_t>(0x0017) > 1) ? true : false;
 }
 
 any &document::operator[](const wstring &key) {

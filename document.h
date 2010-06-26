@@ -23,6 +23,8 @@ private:
 
     std::map<std::wstring, boost::any> m_tags;
 
+    void initialize_from_message(const pstsdk::message &m);
+
 public:
     document() : m_type(unknown) {}
     document(const pstsdk::message &m);

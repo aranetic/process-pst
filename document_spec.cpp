@@ -119,6 +119,18 @@ void document_from_attachment_should_fill_in_basic_edrm_data() {
     // (plus Microsoft Office metadata, but that's not our problem for now)
 }
 
+void document_from_attachment_should_recognize_submessage_attachment() {
+    pst test_pst(L"pstsdk/test/submessage.pst");
+    wstring subj(L"This is a message which has an embedded message attached");
+    message m(find_by_subject(test_pst, subj));
+    document d(*m.attachment_begin());
+
+    // We only check a few fields, on the assumption this uses the same
+    // codepath as regular messages.
+    assert(document::message == d.type());
+    assert(L"This is an embedded message" == any_cast<wstring>(d[L"#Subject"]));
+}
+
 int document_spec(int argc, char **argv) {
     document_should_have_a_zero_arg_constructor();
     document_should_have_an_id_a_type_and_a_content_type();
@@ -132,6 +144,7 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_include_flag_status();
 
     document_from_attachment_should_fill_in_basic_edrm_data();
+    document_from_attachment_should_recognize_submessage_attachment();
     
     return 0;
 }

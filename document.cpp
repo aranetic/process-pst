@@ -26,6 +26,8 @@ namespace {
 document::document(const pstsdk::message &m) {
     property_bag props(m.get_property_bag());
 
+    set_type(document::message);
+
     if (has_prop(m, &message::get_subject))
         (*this)[L"#Subject"] = wstring(m.get_subject());
 

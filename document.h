@@ -11,6 +11,7 @@ namespace pstsdk { class message; }
 class document {
 public:
     enum document_type {
+        unknown,
         file,
         message
     };
@@ -23,7 +24,7 @@ private:
     std::map<std::wstring, boost::any> m_tags;
 
 public:
-    document() {}
+    document() : m_type(unknown) {}
     document(const pstsdk::message &m);
 
     std::wstring id() const { return m_id; }

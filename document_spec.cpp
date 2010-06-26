@@ -32,7 +32,7 @@ message find_by_subject(const pst &pst_file, const wstring &subject) {
 
 void document_should_have_a_zero_arg_constructor() {
     document d;
-    (void) d;
+    assert(document::unknown == d.type());
 }
 
 void document_should_have_an_id_a_type_and_a_content_type() {
@@ -64,7 +64,7 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     document d(m);
 
     // DocId
-    // DocType
+    assert(document::message == d.type());
     // MimeType
     // #From (From and Sender?)
     // #To

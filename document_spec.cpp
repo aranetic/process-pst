@@ -79,7 +79,7 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     // #HasAttachments, #AttachmentCount, #AttachmentNames
     assert(false == any_cast<bool>(d[L"#ReadFlag"]));
     assert(false == any_cast<bool>(d[L"#ImportanceFlag"]));
-    // #MessageClass
+    assert(L"IPM.Note" == any_cast<wstring>(d[L"#MessageClass"]));
     // #FlagStatus
 }
 

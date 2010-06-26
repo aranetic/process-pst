@@ -28,7 +28,7 @@ void document_tags_should_be_accessible_using_subscript_operator() {
     assert(L"Hello, again!" == any_cast<wstring>(d[L"#Subject"]));
 }
 
-void document_tags_should_default_to_boost_any_empty_nonexistent_tag() {
+void document_tags_should_default_to_boost_any_empty() {
     document d;
     assert(d[L"#Nonexistent"].empty());
 }
@@ -38,7 +38,7 @@ int document_spec(int argc, char **argv) {
     document_should_have_an_id_a_type_and_a_content_type();
 
     document_tags_should_be_accessible_using_subscript_operator();
-    document_tags_should_default_to_boost_any_empty_nonexistent_tag();
+    document_tags_should_default_to_boost_any_empty();
 
     return 0;
 }

@@ -76,7 +76,9 @@ void document_from_message_should_fill_in_basic_edrm_data() {
            any_cast<ptime>(d[L"#DateSent"]));
     assert(from_iso_string("20100624T191619Z") ==
            any_cast<ptime>(d[L"#DateReceived"]));
-    // #HasAttachments, #AttachmentCount, #AttachmentNames
+    assert(false == any_cast<bool>(d[L"#HasAttachments"]));
+    assert(0 == any_cast<size_t>(d[L"#AttachmentCount"]));
+    assert(d[L"#AttachmentNames"].empty());
     assert(false == any_cast<bool>(d[L"#ReadFlag"]));
     assert(false == any_cast<bool>(d[L"#ImportanceFlag"]));
     assert(L"IPM.Note" == any_cast<wstring>(d[L"#MessageClass"]));
@@ -102,6 +104,16 @@ void document_from_message_should_include_flag_status() {
     message m(find_by_subject(test_pst, L"Needs response"));
     document d(m);
     assert(2 == any_cast<int32_t>(d[L"#FlagStatus"]));
+}
+
+void document_from_message_should_include_attachment_metadata() {
+    pst test_pst(L"pstsdk/test/sample1.pst");
+    message m(find_by_subject(test_pst, L"Here is a sample message"));
+    document d(m);
+
+    assert(true == any_cast<bool>(d[L"#HasAttachments"]));
+    assert(1 == any_cast<size_t>(d[L"#AttachmentCount"]));
+    assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#AttachmentNames"]));
 }
 
 void document_from_attachment_should_fill_in_basic_edrm_data() {
@@ -142,6 +154,8 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_mark_read_messages();
     document_from_message_should_mark_important_messages();
     document_from_message_should_include_flag_status();
+    document_from_message_should_include_attachment_metadata();
+    // TODO: Unit test for multiple attachments.
 
     document_from_attachment_should_fill_in_basic_edrm_data();
     document_from_attachment_should_recognize_submessage_attachment();

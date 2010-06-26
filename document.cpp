@@ -40,6 +40,23 @@ void document::initialize_from_message(const pstsdk::message &m) {
     if (props.prop_exists(0x0e06)) // PidTagMessageDeliveryTime
         (*this)[L"#DateReceived"] = from_time_t(props.read_time_t_prop(0x0e06));
 
+    if (m.get_attachment_count() == 0) {
+        (*this)[L"#HasAttachments"] = false;
+        (*this)[L"#AttachmentCount"] = size_t(0);
+    } else {
+        (*this)[L"#HasAttachments"] = true;
+        (*this)[L"#AttachmentCount"] = size_t(m.get_attachment_count());
+
+        wstring names;
+        message::attachment_iterator i(m.attachment_begin());
+        for (; i != m.attachment_end(); ++i) {
+            if (!names.empty())
+                names += L";";
+            names += i->get_filename();
+        }
+        (*this)[L"#AttachmentNames"] = names;
+    }
+
     if (props.prop_exists(0x0e07)) // PidTagMessageFlags
         (*this)[L"#ReadFlag"] =
             (props.read_prop<int32_t>(0x0e07) & 0x1) ? true : false;

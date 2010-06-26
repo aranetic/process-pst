@@ -20,8 +20,13 @@ namespace {
 }
 
 document::document(const pstsdk::message &m) {
+    property_bag props(m.get_property_bag());
+
     if (has_prop(m, &message::get_subject))
         (*this)[L"#Subject"] = wstring(m.get_subject());
+
+    if (props.prop_exists(0x007d))
+        (*this)[L"#Header"] = props.read_prop<wstring>(0x007d);
 }
 
 any &document::operator[](const wstring &key) {

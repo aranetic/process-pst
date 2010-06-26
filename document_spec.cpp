@@ -68,7 +68,7 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     // #CC
     // #BCC
     assert(L"Unread email (do not open)" == any_cast<wstring>(d[L"#Subject"]));
-    // #Header
+    assert(L"Return-Path:" == any_cast<wstring>(d[L"#Header"]).substr(0, 12));
     // #DateSent
     // #DateReceived
     // #HasAttachments, #AttachmentCount, #AttachmentNames

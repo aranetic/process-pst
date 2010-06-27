@@ -51,6 +51,11 @@ namespace {
         }
         return result;
     }
+
+    template <>
+    wstring to_tag_value(const bool &value) {
+        return value ? L"true" : L"false";
+    }
 }
 
 // Convert a C++ value to an EDRM TagValue string for serialization to XML.
@@ -59,6 +64,14 @@ wstring edrm_tag_value(const any &value) {
         return to_tag_value(any_cast<wstring>(value));
     else if (value.type() == typeid(vector<wstring>))
         return to_tag_value(any_cast<vector<wstring> >(value));
+    else if (value.type() == typeid(int32_t))
+        return to_tag_value(any_cast<int32_t>(value));
+    //else if (value.type() == typeid(ptime))
+    //    return to_tag_value(any_cast<ptime>(value));;
+    else if (value.type() == typeid(bool))
+        return to_tag_value(any_cast<bool>(value));
+    else if (value.type() == typeid(int64_t))
+        return to_tag_value(any_cast<int64_t>(value));
 
     throw runtime_error("Unable to output EDRM TagValue for value");
 }

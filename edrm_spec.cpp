@@ -43,11 +43,11 @@ void edrm_tag_value_should_format_value_appropriately() {
     v.push_back(L"Bar");
     assert(L"Foo;Bar" == edrm_tag_value(v));
 
-    // int32_t
+    assert(L"-1" == edrm_tag_value(int32_t(-1)));
     // ptime
-    // true
-    // false
-    // int64_t
+    assert(L"true" == edrm_tag_value(true));
+    assert(L"false" == edrm_tag_value(false));
+    assert(L"-1" == edrm_tag_value(int64_t(-1)));
 }
 
 void edrm_tag_value_should_raise_error_if_type_unknown() {

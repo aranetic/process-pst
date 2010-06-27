@@ -25,11 +25,22 @@ void rfc822_quote_should_quote_strings_when_necessary() {
     }
 }
 
+void rfc822_email_should_build_email_addresses() {
+    assert(L"Foo <foo@bar.com>" == rfc822_email(L"Foo", L"foo@bar.com"));
+    assert(L"Foo" == rfc822_email(L"Foo", L""));
+    assert(L"\"Foo B.\"" == rfc822_email(L"Foo B.", L""));
+    assert(L"foo@bar.com" == rfc822_email(L"", L"foo@bar.com"));
+    assert(L"foo@bar.com" == rfc822_email(L"foo@bar.com", L"foo@bar.com"));
+    assert(L"\"Foo B.\" <foo@bar.com>" ==
+           rfc822_email(L"Foo B.", L"foo@bar.com"));
+}
+
 int utilities_spec(int argc, char **argv) {
     string_to_wstring_should_handle_empty_string();
     string_to_wstring_should_convert_ascii_to_wstring();
 
     rfc822_quote_should_quote_strings_when_necessary();
+    rfc822_email_should_build_email_addresses();
 
     return 0;
 }

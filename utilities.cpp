@@ -63,3 +63,14 @@ wstring rfc822_quote(const wstring &str) {
     out += L"\"";
     return out;
 }
+
+wstring rfc822_email(const wstring &display_name, const wstring &email) {
+    if (display_name.empty() && email.empty())
+        throw runtime_error("Can't build address without name or email!");
+    else if (display_name.empty() || display_name == email)
+        return email;
+    else if (email.empty())
+        return rfc822_quote(display_name);
+    else
+        return rfc822_quote(display_name) + L" <" + email + L">";
+}

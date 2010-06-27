@@ -37,12 +37,8 @@ namespace {
         wstring display_name;
         if (has_prop(r, &recipient::get_name))
             display_name = r.get_name();
-        // TODO: Ignore display_name if same as email.
 
-        // TODO: Format address without display name.
-        // TODO: Format address without email?
-
-        return rfc822_quote(display_name) + L" <" + email + L">";
+        return rfc822_email(display_name, email);
     }
 }
 

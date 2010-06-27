@@ -55,27 +55,29 @@ void document::initialize_from_message(const pstsdk::message &m) {
     set_type(document::message);
 
     vector<wstring> to;
-    // TODO: vector<wstring> cc;
-    // TODO: vector<wstring> bcc;
+    vector<wstring> cc;
+    vector<wstring> bcc;
     if (m.get_recipient_count() > 0) {
         message::recipient_iterator i(m.recipient_begin());
         for (; i != m.recipient_end(); ++i) {
             recipient r(*i);
             wstring address(recipient_address(r));
             switch (r.get_type()) {
-                case mapi_to:
-                    to.push_back(address);
-                    break;
-
-                case mapi_cc:
-                case mapi_bcc:
-                default: // TODO: Error?
+                case mapi_to:  to.push_back(address);  break;
+                case mapi_cc:  cc.push_back(address);  break;
+                case mapi_bcc: bcc.push_back(address); break;
+                default:
+                    throw runtime_error("Unknown recipient type");
                     break;
             }
         }
     }
     if (!to.empty())
         (*this)[L"#To"] = to;
+    if (!cc.empty())
+        (*this)[L"#CC"] = cc;
+    if (!bcc.empty())
+        (*this)[L"#BCC"] = bcc;
 
     if (has_prop(m, &message::get_subject))
         (*this)[L"#Subject"] = wstring(m.get_subject());

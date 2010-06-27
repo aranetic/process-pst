@@ -93,7 +93,23 @@ void document_from_message_should_handle_alternative_smtp_recipient_info() {
     document d(m);
 
     assert(L"Terry Mahaffey <terrymah@microsoft.com>" ==
-           any_cast<vector<wstring> >(d[L"#To"])[0]);    
+           any_cast<vector<wstring> >(d[L"#To"])[0]);
+}
+
+void document_from_message_should_handle_various_recipient_types() {
+    pst test_pst(L"test_data/multiple_to_cc.pst");
+    message m(find_by_subject(test_pst, L"Multiple recipients"));
+    document d(m);
+
+    vector<wstring> to(any_cast<vector<wstring> >(d[L"#To"]));
+    assert(2 == to.size());
+    assert(L"John Doe <pst-test-1@aranetic.com>" == to[0]);
+    assert(L"Jane Doe <pst-test-2@aranetic.com>" == to[1]);
+
+    vector<wstring> cc(any_cast<vector<wstring> >(d[L"#CC"]));
+    assert(2 == cc.size());
+    assert(L"pst-test-3@aranetic.com" == cc[0]);
+    assert(L"pst-test-4@aranetic.com" == cc[1]);
 }
 
 void document_from_message_should_mark_read_messages() {
@@ -181,7 +197,7 @@ int document_spec(int argc, char **argv) {
 
     document_from_message_should_fill_in_basic_edrm_data();
     document_from_message_should_handle_alternative_smtp_recipient_info();
-    // TODO: #To, #CC, #BCC with multiple addresses, etc.
+    document_from_message_should_handle_various_recipient_types();
     document_from_message_should_mark_read_messages();
     document_from_message_should_mark_important_messages();
     document_from_message_should_include_flag_status();

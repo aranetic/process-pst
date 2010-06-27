@@ -23,6 +23,6 @@ wstring edrm_tag_data_type(const any &value) {
         return L"Boolean";
     else if (value.type() == typeid(int64_t))
         return L"LongInteger";
-    
-    return wstring();
+
+    throw runtime_error("Unable to determine EDRM TagDataType for value");
 }

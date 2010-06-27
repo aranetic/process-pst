@@ -1,4 +1,5 @@
 #include <cassert>
+#include <stdexcept>
 
 #include <boost/any.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -9,6 +10,11 @@ using namespace std;
 using boost::any;
 using namespace boost::posix_time;
 
+namespace {
+    const char *value_of_unsupported_type = "";
+}
+
+// A type which we don't support outputting to EDRM files.
 void edrm_tag_data_type_should_infer_type_from_value() {
     assert(L"Text" == edrm_tag_data_type(wstring()));
     assert(L"Text" == edrm_tag_data_type(vector<wstring>()));
@@ -19,9 +25,19 @@ void edrm_tag_data_type_should_infer_type_from_value() {
     assert(L"LongInteger" == edrm_tag_data_type(int64_t(0)));
 }
 
+void edrm_tag_data_type_should_raise_error_if_type_unknown() {
+    bool caught_exception(false);
+    try {
+        edrm_tag_data_type(value_of_unsupported_type);
+    } catch (std::exception &) {
+        caught_exception = true;
+    }
+    assert(caught_exception);
+}
+
 int edrm_spec(int argc, char **argv) {
     edrm_tag_data_type_should_infer_type_from_value();
-    //edrm_tag_data_type_should_raise_error_if_type_unknown
+    edrm_tag_data_type_should_raise_error_if_type_unknown();
 
     //edrm_tag_value_should_format_value_appropriately
     //edrm_tag_value_should_raise_error_if_type_unknown

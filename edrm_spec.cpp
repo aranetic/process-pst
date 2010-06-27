@@ -35,12 +35,32 @@ void edrm_tag_data_type_should_raise_error_if_type_unknown() {
     assert(caught_exception);
 }
 
+void edrm_tag_value_should_format_value_appropriately() {
+    // wstring
+    // vector<wstring>
+    // int32_t
+    // ptime
+    // true
+    // false
+    // int64_t
+}
+
+void edrm_tag_value_should_raise_error_if_type_unknown() {
+    bool caught_exception(false);
+    try {
+        edrm_tag_value(value_of_unsupported_type);
+    } catch (std::exception &) {
+        caught_exception = true;
+    }
+    assert(caught_exception);
+}
+
 int edrm_spec(int argc, char **argv) {
     edrm_tag_data_type_should_infer_type_from_value();
     edrm_tag_data_type_should_raise_error_if_type_unknown();
 
-    //edrm_tag_value_should_format_value_appropriately
-    //edrm_tag_value_should_raise_error_if_type_unknown
+    edrm_tag_value_should_format_value_appropriately();
+    edrm_tag_value_should_raise_error_if_type_unknown();
 
     return 0;
 }

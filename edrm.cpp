@@ -26,3 +26,8 @@ wstring edrm_tag_data_type(const any &value) {
 
     throw runtime_error("Unable to determine EDRM TagDataType for value");
 }
+
+// Convert a C++ value to an EDRM TagValue string for serialization to XML.
+wstring edrm_tag_value(const any &value) {
+    throw runtime_error("Unable to output EDRM TagValue for value");
+}

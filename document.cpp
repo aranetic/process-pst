@@ -23,22 +23,30 @@ namespace {
         }
     }
 
-    wstring recipient_address(const recipient &r) {
-        const_table_row props(r.get_property_row());
-
-        // Email addresses may be stored in either PidTagPrimarySmtpAddress
-        // or PidTagEmailAddress.  The latter may or may not be SMTP.
-        wstring email;
-        if (has_prop(r, &recipient::get_email_address))
-            email = r.get_email_address(); // PidTagPrimarySmtpAddress
-        else if (props.prop_exists(0x3003)) // PidTagEmailAddress
-            email = props.read_prop<wstring>(0x3003);
-
+    // Do out best to extract something resembling an RFC822 email
+    // address.
+    wstring extract_address(const const_property_object *props,
+                            prop_id name_prop, prop_id smtp_address_prop,
+                            prop_id email_address_prop) {
         wstring display_name;
-        if (has_prop(r, &recipient::get_name))
-            display_name = r.get_name();
+        if (props->prop_exists(name_prop))
+            display_name = props->read_prop<wstring>(name_prop);
+
+        // Email addresses may be stored as either an SMTP address or a
+        // generic email address.  The latter may or may not be SMTP.
+        wstring email;
+        if (props->prop_exists(smtp_address_prop))
+            email = props->read_prop<wstring>(smtp_address_prop);
+        else if (props->prop_exists(email_address_prop))
+            email = props->read_prop<wstring>(email_address_prop);
 
         return rfc822_email(display_name, email);
+    }
+
+    wstring recipient_address(const recipient &r) {
+        const_table_row props(r.get_property_row());
+        // PidTagDisplayName, PidTagPrimarySmtpAddress, PidTagEmailAddress.
+        return extract_address(&props, 0x3001, 0x39fe, 0x3003);
     }
 }
 
@@ -53,6 +61,16 @@ void document::initialize_from_message(const pstsdk::message &m) {
     property_bag props(m.get_property_bag());
 
     set_type(document::message);
+
+    vector<wstring> from;
+    // Maybe we should use these as 'From', and SentRepresenting as 'Sender'?
+    // PidTagSentRepresentingName, , PidTagSentRepresentingEmailAddress
+    // 0x0042, ???, 0x0065
+    // PidTagSenderName PidTagSenderSmtpAddress PidTagSenderEmailAddress
+    if (props.prop_exists(0x0c1a))
+        from.push_back(extract_address(&props, 0x0c1a, 0x5d01, 0x0c1f));
+    if (!from.empty())
+        (*this)[L"#From"] = from;
 
     vector<wstring> to;
     vector<wstring> cc;

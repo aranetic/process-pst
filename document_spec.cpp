@@ -67,7 +67,8 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     // DocId
     assert(document::message == d.type());
     // MimeType
-    // #From (From and Sender?)
+    assert(L"John Doe <pst-test-1@aranetic.com>" ==
+           any_cast<vector<wstring> >(d[L"#From"])[0]);
     assert(L"Jane Doe <pst-test-2@aranetic.com>" ==
            any_cast<vector<wstring> >(d[L"#To"])[0]);
     assert(d[L"#CC"].empty());
@@ -199,6 +200,7 @@ int document_spec(int argc, char **argv) {
     document_tags_should_default_to_boost_any_empty();
 
     document_from_message_should_fill_in_basic_edrm_data();
+    // Add PidTagSentRepresenting* fields to #From?
     document_from_message_should_handle_alternative_smtp_recipient_info();
     document_from_message_should_handle_various_recipient_types();
     document_from_message_should_mark_read_messages();

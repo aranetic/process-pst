@@ -3,6 +3,7 @@
 
 #include <boost/any.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/foreach.hpp>
 
 #include "utilities.h"
 
@@ -36,12 +37,28 @@ namespace {
         out << value;
         return out.str();
     }
+
+    template <>
+    wstring to_tag_value(const vector<wstring> &values) {
+        wstring result;
+        bool first = true;
+        BOOST_FOREACH(wstring v, values) {
+            if (first)
+                first = false;
+            else
+                result += L";";
+            result += v;
+        }
+        return result;
+    }
 }
 
 // Convert a C++ value to an EDRM TagValue string for serialization to XML.
 wstring edrm_tag_value(const any &value) {
     if (value.type() == typeid(wstring))
         return to_tag_value(any_cast<wstring>(value));
+    else if (value.type() == typeid(vector<wstring>))
+        return to_tag_value(any_cast<vector<wstring> >(value));
 
     throw runtime_error("Unable to output EDRM TagValue for value");
 }

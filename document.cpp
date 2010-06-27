@@ -26,9 +26,12 @@ namespace {
     wstring recipient_address(const recipient &r) {
         const_table_row props(r.get_property_row());
 
+        // Email addresses may be stored in either PidTagPrimarySmtpAddress
+        // or PidTagEmailAddress.  The latter may or may not be SMTP.
         wstring email;
-        // TODO: Prefer get_email_address, if it works.
-        if (props.prop_exists(0x3003)) // PidTagEmailAddress
+        if (has_prop(r, &recipient::get_email_address))
+            email = r.get_email_address(); // PidTagPrimarySmtpAddress
+        else if (props.prop_exists(0x3003)) // PidTagEmailAddress
             email = props.read_prop<wstring>(0x3003);
 
         wstring display_name;

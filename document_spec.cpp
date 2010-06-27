@@ -87,6 +87,15 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     assert(d[L"#FlagStatus"].empty());
 }
 
+void document_from_message_should_handle_alternative_smtp_recipient_info() {
+    pst test_pst(L"pstsdk/test/sample1.pst");
+    message m(find_by_subject(test_pst, L"Here is a sample message"));
+    document d(m);
+
+    assert(L"Terry Mahaffey <terrymah@microsoft.com>" ==
+           any_cast<vector<wstring> >(d[L"#To"])[0]);    
+}
+
 void document_from_message_should_mark_read_messages() {
     pst test_pst(L"test_data/flags_jane_doe.pst");
     message m(find_by_subject(test_pst, L"Needed a response, and has one"));
@@ -171,7 +180,7 @@ int document_spec(int argc, char **argv) {
     document_tags_should_default_to_boost_any_empty();
 
     document_from_message_should_fill_in_basic_edrm_data();
-    // TODO: #To with EX address type.
+    document_from_message_should_handle_alternative_smtp_recipient_info();
     // TODO: #To, #CC, #BCC with multiple addresses, etc.
     document_from_message_should_mark_read_messages();
     document_from_message_should_mark_important_messages();

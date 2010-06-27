@@ -358,14 +358,17 @@ void process_folder(const folder &f) {
 
 int main(int argc, char **argv) {
     // Parse our command-line arguments.
-    if (argc != 2) {
-        cout << "Usage: " << argv[0] << " input.pst" << endl;
+    if (argc < 2) {
+        cout << "Usage: " << argv[0] << " input.pst..." << endl;
         exit(1);
     }
-    string pst_path(argv[1]);
 
-    // Open our pst.
-    pst pst_db(string_to_wstring(pst_path));
-    g_db = pst_db.get_db();
-    process_folder(pst_db.open_root_folder());
+    // Open our PSTs.
+    for (int i = 1; i < argc; ++i) {
+        string pst_path(argv[i]);
+        pst pst_db(string_to_wstring(pst_path));
+        g_db = pst_db.get_db();
+        process_folder(pst_db.open_root_folder());
+        g_db.reset();
+    }
 }

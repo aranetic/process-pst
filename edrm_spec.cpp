@@ -36,7 +36,7 @@ void edrm_tag_data_type_should_raise_error_if_type_unknown() {
 }
 
 void edrm_tag_value_should_format_value_appropriately() {
-    // wstring
+    assert(L"Text" == edrm_tag_value(wstring(L"Text")));
     // vector<wstring>
     // int32_t
     // ptime

@@ -23,6 +23,13 @@ namespace {
     }
 }
 
+void document::initialize_fields() {
+    // Most of our fields will initialize themselves to sensible default
+    // values, but primitive variable types won't.
+    m_type = unknown;
+    m_has_text = false;
+}
+
 void document::initialize_from_message(const pstsdk::message &m) {
     property_bag props(m.get_property_bag());
 
@@ -70,13 +77,20 @@ void document::initialize_from_message(const pstsdk::message &m) {
 
     if (props.prop_exists(0x1090)) // PidTagFlagStatus
         (*this)[L"#FlagStatus"] = props.read_prop<int32_t>(0x1090);
+
+    if (has_prop(m, &message::get_body)) {
+        m_has_text = true;
+        m_text = m.get_body();
+    }
 }
 
 document::document(const pstsdk::message &m) {
+    initialize_fields();
     initialize_from_message(m);
 }
 
 document::document(const pstsdk::attachment &a) {
+    initialize_fields();
     if (a.is_message()) {
         initialize_from_message(a.open_as_message());
     } else {

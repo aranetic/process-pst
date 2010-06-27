@@ -33,6 +33,7 @@ message find_by_subject(const pst &pst_file, const wstring &subject) {
 void document_should_have_a_zero_arg_constructor() {
     document d;
     assert(document::unknown == d.type());
+    assert(!d.has_text());
 }
 
 void document_should_have_an_id_a_type_and_a_content_type() {
@@ -116,6 +117,16 @@ void document_from_message_should_include_attachment_metadata() {
     assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#AttachmentNames"]));
 }
 
+void document_from_message_should_extract_text_file() {
+    pst test_pst(L"test_data/flags_jane_doe.pst");
+    message m(find_by_subject(test_pst, L"Unread email (do not open)"));
+    document d(m);
+
+    wstring expected(L"This email has never been read.");
+    assert(d.has_text());
+    assert(expected == d.text().substr(0, expected.size()));
+}
+
 void document_from_attachment_should_fill_in_basic_edrm_data() {
     pst test_pst(L"pstsdk/test/sample1.pst");
     message m(find_by_subject(test_pst, L"Here is a sample message"));
@@ -164,8 +175,8 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_include_flag_status();
     document_from_message_should_include_attachment_metadata();
     // TODO: Unit test for multiple attachments.
-    // TODO: EDRM text "file".
     // TODO: EDRM native "file" via reassembly.
+    document_from_message_should_extract_text_file();
 
     document_from_attachment_should_fill_in_basic_edrm_data();
     document_from_attachment_should_extract_native_file();

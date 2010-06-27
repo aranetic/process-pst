@@ -23,12 +23,15 @@ private:
 
     std::map<std::wstring, boost::any> m_tags;
 
+    bool m_has_text;
+    std::wstring m_text;
     std::vector<uint8_t> m_native;
 
+    void initialize_fields();
     void initialize_from_message(const pstsdk::message &m);
 
 public:
-    document() : m_type(unknown) {}
+    document() { initialize_fields(); }
     document(const pstsdk::message &m);
     document(const pstsdk::attachment &a);
 
@@ -46,6 +49,13 @@ public:
 
     /// The native file associated with this document.
     const std::vector<uint8_t> &native() const { return m_native; }
+
+    /// Does this document have associated plain text?
+    bool has_text() const { return m_has_text; }
+
+    /// The plain text associated with this document.
+    /// \pre has_text() == true
+    const std::wstring &text() const { return m_text; }
 };
 
 #endif // DOCUMENT_H

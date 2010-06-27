@@ -231,46 +231,49 @@ R prop_or(const T &obj, R (T::*pmf)() const, D default_value) {
     }
 }
 
-void process_property(const property_bag &bag, prop_id id) {
-    wcout << L"  " << property_name(id) << ": ";
-    prop_type type(bag.get_prop_type(id));
+void process_property(const const_property_object *props, size_t level,
+                      prop_id id) {
+    for (size_t i = 0; i < level; ++i)
+        wcout << L"  ";
+    wcout << property_name(id) << ": ";
+    prop_type type(props->get_prop_type(id));
     switch (type) {
         case prop_type_null:
             wcout << "null";
             break;
 
         case prop_type_short:
-            wcout << bag.read_prop<boost::int16_t>(id);
+            wcout << props->read_prop<boost::int16_t>(id);
             break;
 
         case prop_type_long:
-            wcout << bag.read_prop<boost::int32_t>(id);
+            wcout << props->read_prop<boost::int32_t>(id);
             break;
 
         case prop_type_float:
-            wcout << bag.read_prop<float>(id);
+            wcout << props->read_prop<float>(id);
             break;
 
         case prop_type_double:
-            wcout << bag.read_prop<double>(id);
+            wcout << props->read_prop<double>(id);
             break;
 
         case prop_type_boolean:
-            wcout << (bag.read_prop<bool>(id) ? L"true" : L"false");
+            wcout << (props->read_prop<bool>(id) ? L"true" : L"false");
             break;
 
         case prop_type_longlong:
-            wcout << bag.read_prop<boost::int64_t>(id);
+            wcout << props->read_prop<boost::int64_t>(id);
             break;
 
         case prop_type_string:
         case prop_type_wstring:
-            wcout << bag.read_prop<wstring>(id);
+            wcout << props->read_prop<wstring>(id);
             break;
 
         case prop_type_apptime:
         case prop_type_systime:
-            wcout << from_time_t(bag.read_time_t_prop(id));
+            wcout << from_time_t(props->read_time_t_prop(id));
             break;
 
         case prop_type_binary:
@@ -284,9 +287,9 @@ void process_property(const property_bag &bag, prop_id id) {
     wcout << endl;
 }
 
-void process_property_bag(const property_bag &bag) {
-    std::vector<prop_id> ids(bag.get_prop_list());
-    for_each(ids.begin(), ids.end(), bind(process_property, bag, _1));
+void process_properties(const const_property_object *props, size_t level) {
+    std::vector<prop_id> ids(props->get_prop_list());
+    for_each(ids.begin(), ids.end(), bind(process_property, props, level, _1));
 }
 
 void process_recipient(const recipient &r) {
@@ -300,6 +303,7 @@ void process_recipient(const recipient &r) {
     wcout << ": " << prop_or(r, &recipient::get_name, L"(anonymous)") << " <"
           << prop_or(r, &recipient::get_email_address, L"(no email)")
           << ">" << endl;
+    process_properties(&r.get_property_row(), 2);
 }
 
 void process_attachment(const attachment &a) {
@@ -318,7 +322,7 @@ void process_message(const message &m) {
     if (m.get_attachment_count() > 0)
         for_each(m.attachment_begin(), m.attachment_end(), process_attachment);
 
-    process_property_bag(m.get_property_bag());
+    process_properties(&m.get_property_bag(), 1);
 }
 
 void process_folder(const folder &f) {

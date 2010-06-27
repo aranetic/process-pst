@@ -42,6 +42,13 @@ void rfc822_email_should_build_email_addresses() {
            rfc822_email(L"Foo B.", L"foo@bar.com"));
 }
 
+void xml_quote_should_convert_wstring_and_escape_metacharacters() {
+    assert("" == xml_quote(L""));
+    assert("test" == xml_quote(L"test"));
+    assert("\xE2\x80\x94" == xml_quote(L"\u2014"));
+    assert("&lt;&amp;&quot;&apos;&gt;" == xml_quote(L"<&\"'>"));
+}
+
 int utilities_spec(int argc, char **argv) {
     string_to_wstring_should_handle_empty_string();
     string_to_wstring_should_convert_ascii_to_wstring();
@@ -50,6 +57,8 @@ int utilities_spec(int argc, char **argv) {
 
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();
+
+    xml_quote_should_convert_wstring_and_escape_metacharacters();
 
     return 0;
 }

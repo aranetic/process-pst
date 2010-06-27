@@ -11,6 +11,13 @@ void string_to_wstring_should_convert_ascii_to_wstring() {
     assert(L"text" == string_to_wstring("text"));
 }
 
+void wstring_to_utf8_should_convert_to_utf8() {
+    assert("" == wstring_to_utf8(L""));
+    assert("text" == wstring_to_utf8(L"text"));
+    assert(0x2014 == wstring(L"\u2014")[0]);
+    assert("\xE2\x80\x94" == wstring_to_utf8(L"\u2014")); // em-dash
+}
+
 void rfc822_quote_should_quote_strings_when_necessary() {
     assert(L"" == rfc822_quote(L""));
     assert(L"John Smith" == rfc822_quote(L"John Smith"));
@@ -38,6 +45,8 @@ void rfc822_email_should_build_email_addresses() {
 int utilities_spec(int argc, char **argv) {
     string_to_wstring_should_handle_empty_string();
     string_to_wstring_should_convert_ascii_to_wstring();
+
+    wstring_to_utf8_should_convert_to_utf8();
 
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();

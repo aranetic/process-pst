@@ -2,6 +2,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <vector>
+#include <iconv.h>
 
 #include "utilities.h"
 
@@ -19,6 +20,50 @@ wstring string_to_wstring(const string &str) {
 
     wstring wstr(wvec.begin(), wvec.end());
     return wstr;
+}
+
+namespace {
+    // This will need to be customized for various platforms.  Sadly,
+    // "WCHAR_T" does not appear to work as a source character set
+    // with GNU iconv.
+    const char *wchar_t_encoding = "UTF-32LE";
+}
+
+string wstring_to_utf8(const wstring &wstr) {
+    // Handle the empty string, which breaks iconv on some platforms.
+    if (wstr.empty())
+        return string();
+
+    // Open a conversion context.
+    //iconv_t cd(::iconv_open("UTF-8", "WCHAR_T"));
+    iconv_t cd(::iconv_open("UTF-8", const_cast<char *>(wchar_t_encoding)));
+    if (cd == (iconv_t)(-1))
+        throw std::runtime_error("Unable to convert a wstring to UTF-8");
+
+    // Allocate up to 4 UTF-8 bytes per Unicode character, which is all that
+    // is currently permitted by Unicode (and by Windows' UTF-16 encoding).
+    vector<char> utf8(wstr.size() * 4);
+    
+    // Attempt to perform the conversion.
+    const char *inbuf(reinterpret_cast<const char *>(wstr.c_str()));
+    size_t inbytesleft(wstr.size() * sizeof(wchar_t));
+    char *outbuf(&utf8[0]);
+    size_t outbytesleft(utf8.size());
+    size_t result = ::iconv(cd, const_cast<char **>(&inbuf), &inbytesleft,
+                            &outbuf, &outbytesleft);
+
+    // Close our conversion context.
+    ::iconv_close(cd);
+
+    // Check for conversion failure.
+    if (result == size_t(-1) || inbytesleft > 0) {
+        perror("wstring_to_utf8");
+        throw runtime_error("Error converting a wstring to UTF-8");
+    }
+    
+    // Convert our output to a string and return it.
+    size_t output_size(utf8.size() - outbytesleft);
+    return string(utf8.begin(), utf8.begin() + output_size);
 }
 
 wstring rfc822_quote(const wstring &str) {

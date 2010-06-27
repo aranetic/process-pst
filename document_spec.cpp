@@ -68,9 +68,10 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     assert(document::message == d.type());
     // MimeType
     // #From (From and Sender?)
-    // #To
-    // #CC
-    // #BCC
+    assert(L"Jane Doe <pst-test-2@aranetic.com>" ==
+           any_cast<vector<wstring> >(d[L"#To"])[0]);
+    assert(d[L"#CC"].empty());
+    assert(d[L"#BCC"].empty());
     assert(L"Unread email (do not open)" == any_cast<wstring>(d[L"#Subject"]));
     assert(L"Return-Path:" == any_cast<wstring>(d[L"#Header"]).substr(0, 12));
     assert(from_iso_string("20100624T191617Z") ==
@@ -170,10 +171,13 @@ int document_spec(int argc, char **argv) {
     document_tags_should_default_to_boost_any_empty();
 
     document_from_message_should_fill_in_basic_edrm_data();
+    // TODO: #To with EX address type.
+    // TODO: #To, #CC, #BCC with multiple addresses, etc.
     document_from_message_should_mark_read_messages();
     document_from_message_should_mark_important_messages();
     document_from_message_should_include_flag_status();
     document_from_message_should_include_attachment_metadata();
+    // TODO: Attachment names in a vector.
     // TODO: Unit test for multiple attachments.
     // TODO: EDRM native "file" via reassembly.
     document_from_message_should_extract_text_file();

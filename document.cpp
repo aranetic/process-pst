@@ -2,6 +2,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <pstsdk/pst.h>
 
+#include "utilities.h"
 #include "document.h"
 
 using namespace std;
@@ -13,13 +14,32 @@ namespace {
     // Rather than spend quite so much time checking for exceptions, let's
     // build a simple wrapper function which checks for us.
     template <typename R, typename T>
-    bool has_prop(const pstsdk::message &m, R (T::*pmf)() const) {
+    bool has_prop(const T &o, R (T::*pmf)() const) {
         try {
-            (m.*pmf)();
+            (o.*pmf)();
             return true;
         } catch (key_not_found<prop_id> &) {
             return false;
         }
+    }
+
+    wstring recipient_address(const recipient &r) {
+        const_table_row props(r.get_property_row());
+
+        wstring email;
+        // TODO: Prefer get_email_address, if it works.
+        if (props.prop_exists(0x3003)) // PidTagEmailAddress
+            email = props.read_prop<wstring>(0x3003);
+
+        wstring display_name;
+        if (has_prop(r, &recipient::get_name))
+            display_name = r.get_name();
+        // TODO: Ignore display_name if same as email.
+
+        // TODO: Format address without display name.
+        // TODO: Format address without email?
+
+        return rfc822_quote(display_name) + L" <" + email + L">";
     }
 }
 
@@ -34,6 +54,29 @@ void document::initialize_from_message(const pstsdk::message &m) {
     property_bag props(m.get_property_bag());
 
     set_type(document::message);
+
+    vector<wstring> to;
+    // TODO: vector<wstring> cc;
+    // TODO: vector<wstring> bcc;
+    if (m.get_recipient_count() > 0) {
+        message::recipient_iterator i(m.recipient_begin());
+        for (; i != m.recipient_end(); ++i) {
+            recipient r(*i);
+            wstring address(recipient_address(r));
+            switch (r.get_type()) {
+                case mapi_to:
+                    to.push_back(address);
+                    break;
+
+                case mapi_cc:
+                case mapi_bcc:
+                default: // TODO: Error?
+                    break;
+            }
+        }
+    }
+    if (!to.empty())
+        (*this)[L"#To"] = to;
 
     if (has_prop(m, &message::get_subject))
         (*this)[L"#Subject"] = wstring(m.get_subject());
@@ -108,7 +151,6 @@ document::document(const pstsdk::attachment &a) {
         (*this)[L"#FileName"] = filename;
         (*this)[L"#FileExtension"] = extension;
         (*this)[L"#FileSize"] = uint64_t(native().size());
-
     }
 }
 

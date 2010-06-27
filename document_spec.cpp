@@ -156,9 +156,12 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_include_flag_status();
     document_from_message_should_include_attachment_metadata();
     // TODO: Unit test for multiple attachments.
+    // TODO: EDRM text "file".
+    // TODO: EDRM native "file" via reassembly.
 
     document_from_attachment_should_fill_in_basic_edrm_data();
     document_from_attachment_should_recognize_submessage_attachment();
+    // TODO: EDRM native "file".
     
     return 0;
 }

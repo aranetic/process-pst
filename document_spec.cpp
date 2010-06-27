@@ -140,7 +140,10 @@ void document_from_message_should_include_attachment_metadata() {
 
     assert(true == any_cast<bool>(d[L"#HasAttachments"]));
     assert(1 == any_cast<size_t>(d[L"#AttachmentCount"]));
-    assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#AttachmentNames"]));
+
+    vector<wstring> names(any_cast<vector<wstring> >(d[L"#AttachmentNames"]));
+    assert(1 == names.size());
+    assert(L"leah_thumper.jpg" == names[0]);
 }
 
 void document_from_message_should_extract_text_file() {
@@ -202,8 +205,6 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_mark_important_messages();
     document_from_message_should_include_flag_status();
     document_from_message_should_include_attachment_metadata();
-    // TODO: Attachment names in a vector.
-    // TODO: Unit test for multiple attachments.
     // TODO: EDRM native "file" via reassembly.
     document_from_message_should_extract_text_file();
 

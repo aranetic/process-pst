@@ -98,12 +98,10 @@ void document::initialize_from_message(const pstsdk::message &m) {
         (*this)[L"#HasAttachments"] = true;
         (*this)[L"#AttachmentCount"] = size_t(m.get_attachment_count());
 
-        wstring names;
+        vector<wstring> names;
         message::attachment_iterator i(m.attachment_begin());
         for (; i != m.attachment_end(); ++i) {
-            if (!names.empty())
-                names += L";";
-            names += i->get_filename();
+            names.push_back(i->get_filename());
         }
         (*this)[L"#AttachmentNames"] = names;
     }

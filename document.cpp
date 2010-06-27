@@ -88,9 +88,13 @@ document::document(const pstsdk::attachment &a) {
         if (dotpos != wstring::npos)
             extension = filename.substr(dotpos + 1, wstring::npos);
  
+        // Extract the native file.
+        m_native = a.get_bytes();
+
         (*this)[L"#FileName"] = filename;
         (*this)[L"#FileExtension"] = extension;
-        (*this)[L"#FileSize"] = uint64_t(a.size());
+        (*this)[L"#FileSize"] = uint64_t(native().size());
+
     }
 }
 

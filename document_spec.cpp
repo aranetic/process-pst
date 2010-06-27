@@ -126,9 +126,17 @@ void document_from_attachment_should_fill_in_basic_edrm_data() {
     // MimeType
     assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#FileName"]));
     assert(L"jpg" == any_cast<wstring>(d[L"#FileExtension"]));
-    assert(96808 == any_cast<uint64_t>(d[L"#FileSize"]));
+    assert(93142 == any_cast<uint64_t>(d[L"#FileSize"]));
     // Unsupported: #DateCreated, #DateAccessed, #DateModified, #DatePrinted
     // (plus Microsoft Office metadata, but that's not our problem for now)
+}
+
+void document_from_attachment_should_extract_native_file() {
+    pst test_pst(L"pstsdk/test/sample1.pst");
+    message m(find_by_subject(test_pst, L"Here is a sample message"));
+    document d(*m.attachment_begin());
+
+    assert(93142 == d.native().size());
 }
 
 void document_from_attachment_should_recognize_submessage_attachment() {
@@ -160,8 +168,8 @@ int document_spec(int argc, char **argv) {
     // TODO: EDRM native "file" via reassembly.
 
     document_from_attachment_should_fill_in_basic_edrm_data();
+    document_from_attachment_should_extract_native_file();
     document_from_attachment_should_recognize_submessage_attachment();
-    // TODO: EDRM native "file".
     
     return 0;
 }

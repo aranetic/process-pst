@@ -23,6 +23,8 @@ private:
 
     std::map<std::wstring, boost::any> m_tags;
 
+    std::vector<uint8_t> m_native;
+
     void initialize_from_message(const pstsdk::message &m);
 
 public:
@@ -41,6 +43,9 @@ public:
         { m_content_type = ct; return *this; }
 
     boost::any &operator[](const std::wstring &key);
+
+    /// The native file associated with this document.
+    const std::vector<uint8_t> &native() const { return m_native; }
 };
 
 #endif // DOCUMENT_H

@@ -29,7 +29,8 @@ endif()
 find_library(ICONV_LIBRARY NAMES iconv)
 
 # Our C++ source files, except for main.cpp.
-add_library(ProcessPstLib utilities.cpp document.cpp xml_context.cpp edrm.cpp)
+add_library(ProcessPstLib md5.c
+                          utilities.cpp document.cpp xml_context.cpp edrm.cpp)
 
 # Link our executables.
 add_executable(spike spike.cpp)

@@ -88,6 +88,28 @@ wstring edrm_tag_value(const any &value) {
     throw runtime_error("Unable to output EDRM TagValue for value");
 }
 
+namespace {
+    void output_tag(xml_context &x, document::tag_iterator kv) {
+        x.lt("Tag")
+            .attr("TagName", kv->first)
+            .attr("TagValue", edrm_tag_value(kv->second))
+            .attr("TagDataType", edrm_tag_data_type(kv->second))
+            .slash_gt();
+    }
+
+    void output_document(xml_context &x, const document &d) {
+        x.lt("Document").attr("DocType", L"Message").gt();
+        x.lt("Tags").gt();
+        
+        document::tag_iterator ti(d.tag_begin());
+        for (; ti != d.tag_end(); ++ti)
+            output_tag(x, ti);
+
+        x.end_tag("Tags");
+        x.end_tag("Document");
+    }
+}
+
 void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
                      const path &output_directory) {
     xml_context x(loadfile);
@@ -97,23 +119,8 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
     x.lt("Documents").gt();
 
     pst::message_iterator mi(pst_file->message_begin());
-    for (; mi != pst_file->message_end(); ++mi) {
-        document d(*mi);
-        x.lt("Document").attr("DocType", L"Message").gt();
-        x.lt("Tags").gt();
-        
-        document::tag_iterator ti(d.tag_begin());
-        for (; ti != d.tag_end(); ++ti) {
-            x.lt("Tag")
-                .attr("TagName", ti->first)
-                .attr("TagValue", edrm_tag_value(ti->second))
-                .attr("TagDataType", edrm_tag_data_type(ti->second))
-                .slash_gt();
-        }
-
-        x.end_tag("Tags");
-        x.end_tag("Document");
-    }
+    for (; mi != pst_file->message_end(); ++mi)
+        output_document(x, document(*mi));
 
     x.end_tag("Documents");
     x.lt("Relationships").gt();

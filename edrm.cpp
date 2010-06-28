@@ -100,6 +100,14 @@ wstring edrm_context::next_doc_id() {
 }
 
 namespace {
+    wstring native_filename(const document &d) {
+        wstring filename(d.id());
+        any extension(d[L"#FileExtension"]);
+        if (!extension.empty())
+            filename += L"." + any_cast<wstring>(extension);
+        return filename;
+    }
+
     void output_tag(edrm_context &edrm, document::tag_iterator kv) {
         edrm.loadfile().lt("Tag")
             .attr("TagName", kv->first)
@@ -111,11 +119,7 @@ namespace {
     void output_native_file(edrm_context &edrm, const document &d) {
         xml_context &x(edrm.loadfile());
 
-        wstring filename(d.id());
-        any extension(d[L"#FileExtension"]);
-        if (!extension.empty())
-            filename += L"." + any_cast<wstring>(extension);
-
+        wstring filename(native_filename(d));
         wstring size(lexical_cast<wstring>(d.native().size()));
         wstring hash(string_to_wstring(md5(d.native())));
 

@@ -44,12 +44,12 @@ describe "process-pst" do
     end
 
     it "should output metadata for each message and attachment in the PST" do
-      xpath("//Document[@DocType='Message']/Tags") do
+      xpath("//Document[@DocID='d0000001'][@DocType='Message']/Tags") do
         xpath("./Tag[@TagName='#Subject']" +
               "[@TagValue='Here is a sample message']" +
               "[@TagDataType='Text']") { true }
       end
-      xpath("//Document[@DocType='File']/Tags") do
+      xpath("//Document[@DocID='d0000002'][@DocType='File']/Tags") do
         xpath("./Tag[@TagName='#FileName']" +
               "[@TagValue='leah_thumper.jpg']" +
               "[@TagDataType='Text']") { true }

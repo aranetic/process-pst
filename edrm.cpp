@@ -135,7 +135,10 @@ namespace {
     void output_document(edrm_context &edrm, const document &d) {
         xml_context &x(edrm.loadfile());
 
-        x.lt("Document").attr("DocType", d.type_string()).gt();
+        x.lt("Document")
+            .attr("DocID", d.id())
+            .attr("DocType", d.type_string())
+            .gt();
 
         x.lt("Files").gt();
         if (d.has_native())

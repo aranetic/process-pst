@@ -119,8 +119,15 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
     x.lt("Documents").gt();
 
     pst::message_iterator mi(pst_file->message_begin());
-    for (; mi != pst_file->message_end(); ++mi)
-        output_document(x, document(*mi));
+    for (; mi != pst_file->message_end(); ++mi) {
+        message m(*mi);
+        output_document(x, m);
+        if (m.get_attachment_count() > 0) {
+            message::attachment_iterator ai(m.attachment_begin());
+            for (; ai != m.attachment_end(); ++ai)
+                output_document(x, document(*ai));
+        }
+    }
 
     x.end_tag("Documents");
     x.lt("Relationships").gt();

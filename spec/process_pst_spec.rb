@@ -43,15 +43,20 @@ describe "process-pst" do
       end
     end
 
-    it "should output metadata for each message in the PST" do
+    it "should output metadata for each message and attachment in the PST" do
       _assert_xml(File.read(loadfile))
-      assert do
-        xpath("//Document[@DocType='Message']/Tags") do
-          xpath("./Tag[@TagName='#Subject']" +
-                "[@TagValue='Here is a sample message']" +
-                "[@TagDataType='Text']") { true }
-        end
+      xpath("//Document[@DocType='Message']/Tags") do
+        xpath("./Tag[@TagName='#Subject']" +
+              "[@TagValue='Here is a sample message']" +
+              "[@TagDataType='Text']") { true }
       end
+      xpath("//Document[@DocType='File']/Tags") do
+        xpath("./Tag[@TagName='#FileName']" +
+              "[@TagValue='leah_thumper.jpg']" +
+              "[@TagDataType='Text']") { true }
+      end      
     end
+
+    # it should recurse through nested submessages
   end
 end

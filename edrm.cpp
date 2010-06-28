@@ -98,6 +98,14 @@ namespace xml {
     string attr(const string &name, const wstring &value) {
         return " " + name + "='" + xml_quote(value) + "'";
     }
+
+    string start_tag(size_t levels, const string &tag_name) {
+        return indent(levels) + "<" + tag_name + ">\n";
+    }
+
+    string end_tag(size_t levels, const string &tag_name) {
+        return indent(levels) + "</" + tag_name + ">\n";
+    }
 }
 
 void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
@@ -105,14 +113,14 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
     using namespace xml;
     loadfile << "<?xml version='1.0' encoding='UTF-8'?>" << endl
              << "<Root DataInterchangeType='Update'>" << endl
-             << indent(1) << "<Batch>" << endl
-             << indent(2) << "<Documents>" << endl;
+             << start_tag(1, "Batch")
+             << start_tag(2, "Documents");
 
     pst::message_iterator mi(pst_file->message_begin());
     for (; mi != pst_file->message_end(); ++mi) {
         document d(*mi);
         loadfile << indent(3) << "<Document DocType='Message'>" << endl
-                 << indent(4) << "<Tags>" << endl;
+                 << start_tag(4, "Tags");
         
         document::tag_iterator ti(d.tag_begin());
         for (; ti != d.tag_end(); ++ti) {
@@ -122,13 +130,13 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
                      << "/>" << endl;
         }
 
-        loadfile << indent(4) << "</Tags>" << endl
-                 << indent(3) << "</Document>" << endl;
+        loadfile << end_tag(4, "Tags")
+                 << end_tag(3, "Document");
     }
 
-    loadfile << indent(2) << "</Documents>" << endl
-             << indent(2) << "<Relationships>" << endl
-             << indent(2) << "</Relationships>" << endl
-             << indent(1) << "</Batch>" << endl
-             << "</Root>" << endl;
+    loadfile << end_tag(2, "Documents")
+             << start_tag(2, "Relationships")
+             << end_tag(2, "Relationships")
+             << end_tag(1, "Batch")
+             << end_tag(0, "Root");
 }

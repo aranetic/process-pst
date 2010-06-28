@@ -88,6 +88,10 @@ wstring edrm_tag_value(const any &value) {
 }
 
 namespace xml {
+    string xml_declaration() {
+        return "<?xml version='1.0' encoding='UTF-8'?>\n";
+    }
+
     string indent(size_t levels) {
         string result;
         for (size_t i = 0; i < levels; ++i)
@@ -95,48 +99,67 @@ namespace xml {
         return result;
     }
 
+    string tag_open(size_t levels, const string &tag_name) {
+        return indent(levels) + "<" + tag_name;
+    }
+
     string attr(const string &name, const wstring &value) {
         return " " + name + "='" + xml_quote(value) + "'";
     }
 
-    string start_tag(size_t levels, const string &tag_name) {
-        return indent(levels) + "<" + tag_name + ">\n";
+    string tag_close(size_t &levels) {
+        ++levels;
+        return ">\n";
     }
 
-    string end_tag(size_t levels, const string &tag_name) {
-        return indent(levels) + "</" + tag_name + ">\n";
+    string tag_close_empty(size_t &levels) {
+        return "/>\n";
+    }
+
+    string start_tag(size_t &levels, const string &tag_name) {
+        return tag_open(levels, tag_name) + tag_close(levels);
+    }
+
+    string end_tag(size_t &levels, const string &tag_name) {
+        return indent(levels--) + "</" + tag_name + ">\n";
     }
 }
 
 void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
                      const path &output_directory) {
     using namespace xml;
-    loadfile << "<?xml version='1.0' encoding='UTF-8'?>" << endl
-             << "<Root DataInterchangeType='Update'>" << endl
-             << start_tag(1, "Batch")
-             << start_tag(2, "Documents");
+    size_t l = 0;
+    loadfile << xml_declaration()
+             << tag_open(l, "Root")
+             <<   attr("DataInterchangeType", L"Update")
+             << tag_close(l)
+             << start_tag(l, "Batch")
+             << start_tag(l, "Documents");
 
     pst::message_iterator mi(pst_file->message_begin());
     for (; mi != pst_file->message_end(); ++mi) {
         document d(*mi);
-        loadfile << indent(3) << "<Document DocType='Message'>" << endl
-                 << start_tag(4, "Tags");
+        loadfile << tag_open(l, "Document")
+                 <<   attr("DocType", L"Message") 
+                 << tag_close(l)
+                 << start_tag(l, "Tags");
         
         document::tag_iterator ti(d.tag_begin());
         for (; ti != d.tag_end(); ++ti) {
-            loadfile << indent(5) << "<Tag" << attr("TagName", ti->first)
-                     << attr("TagValue", edrm_tag_value(ti->second))
-                     << attr("TagDataType", edrm_tag_data_type(ti->second))
-                     << "/>" << endl;
+            loadfile << tag_open(l, "Tag")
+                     <<   attr("TagName", ti->first)
+                     <<   attr("TagValue", edrm_tag_value(ti->second))
+                     <<   attr("TagDataType", edrm_tag_data_type(ti->second))
+                     << tag_close_empty(l);
         }
 
-        loadfile << end_tag(4, "Tags")
-                 << end_tag(3, "Document");
+        loadfile << end_tag(l, "Tags")
+                 << end_tag(l, "Document");
     }
 
-    loadfile << end_tag(2, "Documents")
-             << start_tag(2, "Relationships")
-             << end_tag(2, "Relationships")
-             << end_tag(1, "Batch")
-             << end_tag(0, "Root");
+    loadfile << end_tag(l, "Documents")
+             << start_tag(l, "Relationships")
+             << end_tag(l, "Relationships")
+             << end_tag(l, "Batch")
+             << end_tag(l, "Root");
 }

@@ -21,7 +21,8 @@ private:
     document_type m_type;
     std::wstring m_content_type;
 
-    std::map<std::wstring, boost::any> m_tags;
+    typedef std::map<std::wstring, boost::any> tag_map;
+    tag_map m_tags;
 
     bool m_has_text;
     std::wstring m_text;
@@ -31,6 +32,8 @@ private:
     void initialize_from_message(const pstsdk::message &m);
 
 public:
+    typedef tag_map::const_iterator tag_iterator;
+
     document() { initialize_fields(); }
     document(const pstsdk::message &m);
     document(const pstsdk::attachment &a);
@@ -46,6 +49,9 @@ public:
         { m_content_type = ct; return *this; }
 
     boost::any &operator[](const std::wstring &key);
+
+    tag_iterator tag_begin() const { return m_tags.begin(); }
+    tag_iterator tag_end() const { return m_tags.end(); }
 
     /// The native file associated with this document.
     const std::vector<uint8_t> &native() const { return m_native; }

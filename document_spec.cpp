@@ -59,6 +59,19 @@ void document_tags_should_default_to_boost_any_empty() {
     assert(d[L"#Nonexistent"].empty());
 }
 
+void document_tags_should_support_iteration() {
+    document d;
+    d[L"#Subject"] = wstring(L"Hello!");
+    document::tag_iterator i(d.tag_begin());
+    size_t count = 0;
+    for (; i != d.tag_end(); ++i) {
+        assert(L"#Subject" == i->first);
+        assert(L"Hello!" == any_cast<wstring>(i->second));
+        ++count;
+    }
+    assert(1 == count);
+}
+
 void document_from_message_should_fill_in_basic_edrm_data() {
     pst test_pst(L"test_data/flags_jane_doe.pst");
     message m(find_by_subject(test_pst, L"Unread email (do not open)"));
@@ -198,6 +211,7 @@ int document_spec(int argc, char **argv) {
 
     document_tags_should_be_accessible_using_subscript_operator();
     document_tags_should_default_to_boost_any_empty();
+    document_tags_should_support_iteration();
 
     document_from_message_should_fill_in_basic_edrm_data();
     // Add PidTagSentRepresenting* fields to #From?

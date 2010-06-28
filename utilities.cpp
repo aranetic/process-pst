@@ -1,10 +1,13 @@
 #include <cstdlib>
 #include <cctype>
+#include <sstream>
+#include <iomanip>
 #include <stdexcept>
 #include <vector>
 #include <iconv.h>
 
 #include "utilities.h"
+#include "md5.h"
 
 using namespace std;
 
@@ -118,6 +121,21 @@ wstring rfc822_email(const wstring &display_name, const wstring &email) {
         return rfc822_quote(display_name);
     else
         return rfc822_quote(display_name) + L" <" + email + L">";
+}
+
+string md5(const vector<uint8_t> &v) {
+    // Calculate the MD5 sum.
+    md5_state_s pms;
+    md5_init(&pms);
+    md5_append(&pms, &v[0], v.size());
+    md5_byte_t digest[16];
+    md5_finish(&pms, digest);
+
+    // Convert to hexadecimal string.
+    ostringstream out;
+    for (size_t i = 0; i < 16; i++)
+        out << hex << setw(2) << setfill('0') << uint32_t(digest[i]);
+    return out.str();
 }
 
 /// Convert a string to UTF-8 and escape any XML metacharacters.

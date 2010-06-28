@@ -42,6 +42,12 @@ void rfc822_email_should_build_email_addresses() {
            rfc822_email(L"Foo B.", L"foo@bar.com"));
 }
 
+void md5_should_calculate_md5_hash_for_vector() {
+    string s("Data");
+    vector<uint8_t> v(s.begin(), s.end());
+    assert("f6068daa29dbb05a7ead1e3b5a48bbee" == md5(v));
+}
+
 void xml_quote_should_convert_wstring_and_escape_metacharacters() {
     assert("" == xml_quote(L""));
     assert("test" == xml_quote(L"test"));
@@ -57,6 +63,8 @@ int utilities_spec(int argc, char **argv) {
 
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();
+
+    md5_should_calculate_md5_hash_for_vector();
 
     xml_quote_should_convert_wstring_and_escape_metacharacters();
 

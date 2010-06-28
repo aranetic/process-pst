@@ -88,6 +88,15 @@ wstring edrm_tag_value(const any &value) {
     throw runtime_error("Unable to output EDRM TagValue for value");
 }
 
+/// Generate a unique document identifier.  We try to keep these to 8
+/// characters for the few remaining legal shops that use 8.3 filenames.
+string edrm_context::next_doc_id() {
+    size_t id = m_next_doc_id++;
+    ostringstream out;
+    out << "d" << setw(7) << setfill('0') << id;
+    return out.str();
+}
+
 namespace {
     void output_tag(xml_context &x, document::tag_iterator kv) {
         x.lt("Tag")

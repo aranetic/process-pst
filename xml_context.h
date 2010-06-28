@@ -4,10 +4,12 @@
 #include <string>
 #include <iostream>
 
+#include <boost/utility.hpp>
+
 /// A somewhat eccentric XML writer class refactored out of the EDRM
 /// output code.  The API is decidedly odd, but it seems to match our
 /// needs.
-class xml_context {
+class xml_context : boost::noncopyable {
     std::ostream &m_out;
     int m_indent;
 

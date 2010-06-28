@@ -33,6 +33,7 @@ message find_by_subject(const pst &pst_file, const wstring &subject) {
 void document_should_have_a_zero_arg_constructor() {
     document d;
     assert(document::unknown == d.type());
+    assert(!d.has_native());
     assert(!d.has_text());
 }
 
@@ -216,6 +217,7 @@ void document_from_attachment_should_extract_native_file() {
     message m(find_by_subject(test_pst, L"Here is a sample message"));
     document d(*m.attachment_begin());
 
+    assert(d.has_native());
     assert(93142 == d.native().size());
 }
 

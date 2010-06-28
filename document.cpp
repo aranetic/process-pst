@@ -69,6 +69,7 @@ void document::initialize_fields() {
     // values, but primitive variable types won't.
     m_type = unknown;
     m_has_text = false;
+    m_has_native = false;
 }
 
 void document::initialize_from_message(const pstsdk::message &m) {
@@ -178,6 +179,7 @@ document::document(const pstsdk::attachment &a) {
             extension = filename.substr(dotpos + 1, wstring::npos);
  
         // Extract the native file.
+        m_has_native = true;
         m_native = a.get_bytes();
 
         (*this)[L"#FileName"] = filename;

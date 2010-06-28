@@ -24,9 +24,10 @@ private:
     typedef std::map<std::wstring, boost::any> tag_map;
     tag_map m_tags;
 
+    bool m_has_native;
+    std::vector<uint8_t> m_native;
     bool m_has_text;
     std::wstring m_text;
-    std::vector<uint8_t> m_native;
 
     void initialize_fields();
     void initialize_from_message(const pstsdk::message &m);
@@ -53,6 +54,9 @@ public:
 
     tag_iterator tag_begin() const { return m_tags.begin(); }
     tag_iterator tag_end() const { return m_tags.end(); }
+
+    /// Does this document have associated plain text?
+    bool has_native() const { return m_has_native; }
 
     /// The native file associated with this document.
     const std::vector<uint8_t> &native() const { return m_native; }

@@ -98,7 +98,7 @@ namespace {
     }
 
     void output_document(xml_context &x, const document &d) {
-        x.lt("Document").attr("DocType", L"Message").gt();
+        x.lt("Document").attr("DocType", d.type_string()).gt();
         x.lt("Tags").gt();
         
         document::tag_iterator ti(d.tag_begin());

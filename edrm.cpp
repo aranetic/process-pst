@@ -87,35 +87,48 @@ wstring edrm_tag_value(const any &value) {
     throw runtime_error("Unable to output EDRM TagValue for value");
 }
 
+namespace xml {
+    string indent(size_t levels) {
+        string result;
+        for (size_t i = 0; i < levels; ++i)
+            result += "  ";
+        return result;
+    }
+
+    string attr(const string &name, const wstring &value) {
+        return " " + name + "='" + xml_quote(value) + "'";
+    }
+}
+
 void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
                      const path &output_directory) {
+    using namespace xml;
     loadfile << "<?xml version='1.0' encoding='UTF-8'?>" << endl
              << "<Root DataInterchangeType='Update'>" << endl
-             << "  <Batch>" << endl
-             << "    <Documents>" << endl;
+             << indent(1) << "<Batch>" << endl
+             << indent(2) << "<Documents>" << endl;
 
     pst::message_iterator mi(pst_file->message_begin());
     for (; mi != pst_file->message_end(); ++mi) {
         document d(*mi);
-        loadfile << "      <Document DocType='Message'>" << endl
-                 << "        <Tags>" << endl;
+        loadfile << indent(3) << "<Document DocType='Message'>" << endl
+                 << indent(4) << "<Tags>" << endl;
         
         document::tag_iterator ti(d.tag_begin());
         for (; ti != d.tag_end(); ++ti) {
-            loadfile << "          <Tag TagName='" << xml_quote(ti->first)
-                     << "' TagValue='" << xml_quote(edrm_tag_value(ti->second))
-                     << "' TagDataType='"
-                     << xml_quote(edrm_tag_data_type(ti->second)) << "' />"
-                     << endl;
+            loadfile << indent(5) << "<Tag" << attr("TagName", ti->first)
+                     << attr("TagValue", edrm_tag_value(ti->second))
+                     << attr("TagDataType", edrm_tag_data_type(ti->second))
+                     << "/>" << endl;
         }
 
-        loadfile << "        </Tags>" << endl
-                 << "      </Document>" << endl;
+        loadfile << indent(4) << "</Tags>" << endl
+                 << indent(3) << "</Document>" << endl;
     }
 
-    loadfile << "    </Documents>" << endl
-             << "    <Relationships>" << endl
-             << "    </Relationships>" << endl
-             << "  </Batch>" << endl
+    loadfile << indent(2) << "</Documents>" << endl
+             << indent(2) << "<Relationships>" << endl
+             << indent(2) << "</Relationships>" << endl
+             << indent(1) << "</Batch>" << endl
              << "</Root>" << endl;
 }

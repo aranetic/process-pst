@@ -10,6 +10,7 @@
 
 using namespace std;
 using boost::any;
+using namespace boost::filesystem;
 using namespace boost::posix_time;
 
 namespace {
@@ -65,14 +66,20 @@ void edrm_tag_value_should_raise_error_if_type_unknown() {
 
 void edrm_context_should_have_xml_context_for_loadfile() {
     ostringstream out;
-    edrm_context edrm(out);
+    edrm_context edrm(out, path());
     edrm.loadfile().lt("Root").slash_gt();
     assert("<?xml version='1.0' encoding='UTF-8'?>\n<Root/>\n" == out.str());
 }
 
+void edrm_context_should_have_output_directory() {
+    ostringstream out;
+    edrm_context edrm(out, path("foo"));
+    assert(path("foo") == edrm.out_dir());
+}
+
 void edrm_context_should_generate_doc_ids() {
     ostringstream out;
-    edrm_context edrm(out);
+    edrm_context edrm(out, path());
     assert("d0000001" == edrm.next_doc_id());
     assert("d0000002" == edrm.next_doc_id());
 }
@@ -85,6 +92,7 @@ int edrm_spec(int argc, char **argv) {
     edrm_tag_value_should_raise_error_if_type_unknown();
 
     edrm_context_should_have_xml_context_for_loadfile();
+    edrm_context_should_have_output_directory();
     edrm_context_should_generate_doc_ids();
 
     return 0;

@@ -50,6 +50,18 @@ namespace {
         // PidTagDisplayName, PidTagPrimarySmtpAddress, PidTagEmailAddress.
         return extract_address(&props, 0x3001, 0x39fe, 0x3003);
     }
+
+    wstring attachment_name(const attachment &a) {
+        if (a.is_message()) {
+            message m(a.open_as_message());
+            if (has_prop(m, &message::get_subject))
+                return m.get_subject();
+        } else {
+            if (has_prop(a, &attachment::get_filename))
+                return a.get_filename();
+        }
+        return L"(no name)";
+    }
 }
 
 void document::initialize_fields() {
@@ -121,7 +133,7 @@ void document::initialize_from_message(const pstsdk::message &m) {
         vector<wstring> names;
         message::attachment_iterator i(m.attachment_begin());
         for (; i != m.attachment_end(); ++i) {
-            names.push_back(i->get_filename());
+            names.push_back(attachment_name(*i));
         }
         (*this)[L"#AttachmentNames"] = names;
     }

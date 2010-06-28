@@ -177,6 +177,15 @@ void document_from_message_should_include_attachment_metadata() {
     assert(L"leah_thumper.jpg" == names[0]);
 }
 
+void document_from_message_should_use_subject_as_message_attachment_filename() {
+    pst test_pst(L"test_data/four_nesting_levels.pst");
+    message m(find_by_subject(test_pst, L"Outermost message"));
+    document d(m);
+
+    vector<wstring> names(any_cast<vector<wstring> >(d[L"#AttachmentNames"]));
+    assert(L"Middle message" == names[0]);
+}
+
 void document_from_message_should_extract_text_file() {
     pst test_pst(L"test_data/flags_jane_doe.pst");
     message m(find_by_subject(test_pst, L"Unread email (do not open)"));
@@ -238,6 +247,7 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_mark_important_messages();
     document_from_message_should_include_flag_status();
     document_from_message_should_include_attachment_metadata();
+    document_from_message_should_use_subject_as_message_attachment_filename();
     // TODO: EDRM native "file" via reassembly.
     document_from_message_should_extract_text_file();
 

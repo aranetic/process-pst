@@ -19,7 +19,7 @@ endif()
 
 # Make sure we have Boost.
 include(FindBoost)
-find_package(Boost 1.42.0 COMPONENTS system filesystem REQUIRED)
+find_package(Boost 1.42.0 COMPONENTS filesystem system date_time REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
@@ -52,7 +52,7 @@ create_test_sourcelist(CppTestsFiles CppTests.cpp
 
 # Build a single test executable for all our C++ libraries.
 add_executable(CppTests ${CppTestsFiles})
-target_link_libraries(CppTests ProcessPstLib)
+target_link_libraries(CppTests ProcessPstLib ${Boost_LIBRARIES})
 if(ICONV_LIBRARY)
   target_link_libraries(CppTests ${ICONV_LIBRARY})
 endif()

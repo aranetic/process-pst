@@ -55,16 +55,7 @@ namespace {
 
     template <>
     wstring to_tag_value(const ptime &value) {
-        wostringstream out;
-        date d(value.date());
-        time_duration t(value.time_of_day());
-        // The to_iso_extended_string function looks like it does what we
-        // want, but it causes link errors.  So do it by hand.
-        out << d.year() << L"-"
-            << setw(2) << setfill(L'0') << int(d.month()) << L"-"
-            << setw(2) << setfill(L'0') << d.day()
-            << L"T" << string_to_wstring(to_simple_string(t)) << L"Z";
-        return out.str();
+        return string_to_wstring(to_iso_extended_string(value)) + L"Z";
     }
 
     template <>

@@ -36,8 +36,8 @@ public:
     typedef tag_map::const_iterator tag_iterator;
 
     document() { initialize_fields(); }
-    document(const pstsdk::message &m);
-    document(const pstsdk::attachment &a);
+    explicit document(const pstsdk::message &m);
+    explicit document(const pstsdk::attachment &a);
 
     std::wstring id() const { return m_id; }
     document &set_id(const std::wstring &id) { m_id = id; return *this; }

@@ -9,6 +9,10 @@ describe "process-pst" do
     rm_rf(build_path("out"))
   end
 
+  def loadfile
+    build_path("out/edrm-loadfile.xml")
+  end
+
   it "should fail if passed invalid arguments" do
     process_pst("nosuch.pst", "out").should == false
   end
@@ -21,10 +25,6 @@ describe "process-pst" do
   context "sample1.pst" do
     before do
       @result = process_pst("pstsdk/test/sample1.pst", "out")
-    end
-
-    def loadfile
-      build_path("out/edrm-loadfile.xml")
     end
 
     it "should succeed if passed valid arguments" do
@@ -56,7 +56,22 @@ describe "process-pst" do
               "[@TagDataType='Text']") { true }
       end      
     end
+  end
 
-    # it should recurse through nested submessages
+  context "four_nesting_levels.pst" do
+    it "should recurse through nested submessages" do
+      process_pst("test_data/four_nesting_levels.pst", "out")
+      _assert_xml(File.read(loadfile))
+
+      subjects = ["Outermost message", "Middle message", "Innermost message"]
+      subjects.each do |s|
+        xpath("//Tag[@TagName='#Subject'][@TagValue='#{s}']") { true }
+      end
+
+      filenames = ["hello.txt"]
+      filenames.each do |s|
+        xpath("//Tag[@TagName='#FileName'][@TagValue='#{s}']") { true }
+      end
+    end
   end
 end

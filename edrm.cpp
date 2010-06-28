@@ -108,6 +108,24 @@ namespace {
         x.end_tag("Tags");
         x.end_tag("Document");
     }
+
+    void output_message(xml_context &x, const message &m);
+
+    void output_attachment(xml_context &x, const attachment &a) {
+        if (a.is_message())
+            output_message(x, a.open_as_message());
+        else
+            output_document(x, document(a));
+    }
+
+    void output_message(xml_context &x, const message &m) {
+        output_document(x, document(m));
+        if (m.get_attachment_count() > 0) {
+            message::attachment_iterator ai(m.attachment_begin());
+            for (; ai != m.attachment_end(); ++ai)
+                output_attachment(x, *ai);
+        }
+    }
 }
 
 void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
@@ -119,15 +137,8 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
     x.lt("Documents").gt();
 
     pst::message_iterator mi(pst_file->message_begin());
-    for (; mi != pst_file->message_end(); ++mi) {
-        message m(*mi);
-        output_document(x, m);
-        if (m.get_attachment_count() > 0) {
-            message::attachment_iterator ai(m.attachment_begin());
-            for (; ai != m.attachment_end(); ++ai)
-                output_document(x, document(*ai));
-        }
-    }
+    for (; mi != pst_file->message_end(); ++mi)
+        output_message(x, *mi);
 
     x.end_tag("Documents");
     x.lt("Relationships").gt();

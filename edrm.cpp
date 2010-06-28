@@ -121,10 +121,6 @@ public:
         m_out << "/>" << endl;
     }
 
-    void start_tag(const string &tag_name) {
-        lt(tag_name).gt();
-    }
-
     void end_tag(const string &tag_name) {
         if (m_indent < 1)
             throw runtime_error("Unbalanced tags in XML");
@@ -139,14 +135,14 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
     xml_context x(loadfile);
 
     x.lt("Root").attr("DataInterchangeType", L"Update").gt();
-    x.start_tag("Batch");
-    x.start_tag("Documents");
+    x.lt("Batch").gt();
+    x.lt("Documents").gt();
 
     pst::message_iterator mi(pst_file->message_begin());
     for (; mi != pst_file->message_end(); ++mi) {
         document d(*mi);
         x.lt("Document").attr("DocType", L"Message").gt();
-        x.start_tag("Tags");
+        x.lt("Tags").gt();
         
         document::tag_iterator ti(d.tag_begin());
         for (; ti != d.tag_end(); ++ti) {
@@ -162,7 +158,7 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
     }
 
     x.end_tag("Documents");
-    x.start_tag("Relationships");
+    x.lt("Relationships").gt();
     x.end_tag("Relationships");
     x.end_tag("Batch");
     x.end_tag("Root");

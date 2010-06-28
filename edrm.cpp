@@ -4,6 +4,7 @@
 #include <boost/any.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #include <pstsdk/pst.h>
 
 #include "utilities.h"
@@ -14,6 +15,7 @@
 using namespace std;
 using boost::any;
 using boost::any_cast;
+using boost::lexical_cast;
 using namespace boost::gregorian;
 using namespace boost::posix_time;
 using namespace boost::filesystem;
@@ -106,6 +108,26 @@ namespace {
             .slash_gt();
     }
 
+    void output_native_file(edrm_context &edrm, const document &d) {
+        xml_context &x(edrm.loadfile());
+
+        wstring filename(d.id());
+        any extension(d[L"#FileExtension"]);
+        if (!extension.empty())
+            filename += L"." + any_cast<wstring>(extension);
+
+        wstring size(lexical_cast<wstring>(d.native().size()));
+        wstring hash(string_to_wstring(md5(d.native())));
+
+        x.lt("File").attr("FileType", L"Native").gt();
+        x.lt("ExternalFile")
+            .attr("FileName", filename)
+            .attr("FileSize", size)
+            .attr("Hash", hash)
+            .slash_gt();
+        x.end_tag("File");
+    }
+
     void output_document(edrm_context &edrm, const document &d) {
         xml_context &x(edrm.loadfile());
 
@@ -113,7 +135,7 @@ namespace {
 
         x.lt("Files").gt();
         if (d.has_native())
-            x.lt("File").attr("FileType", L"Native").slash_gt();
+            output_native_file(edrm, d);
         x.end_tag("Files");
 
         x.lt("Tags").gt();        
@@ -128,14 +150,20 @@ namespace {
     void output_message(edrm_context &edrm, const message &m);
 
     void output_attachment(edrm_context &edrm, const attachment &a) {
-        if (a.is_message())
+        if (a.is_message()) {
             output_message(edrm, a.open_as_message());
-        else
-            output_document(edrm, document(a));
+        } else {
+            document d(a);
+            d.set_id(edrm.next_doc_id());
+            output_document(edrm, d);
+        }
     }
 
     void output_message(edrm_context &edrm, const message &m) {
-        output_document(edrm, document(m));
+        document d(m);
+        d.set_id(edrm.next_doc_id());
+        output_document(edrm, d);
+
         if (m.get_attachment_count() > 0) {
             message::attachment_iterator ai(m.attachment_begin());
             for (; ai != m.attachment_end(); ++ai)

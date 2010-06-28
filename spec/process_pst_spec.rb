@@ -76,8 +76,12 @@ describe "process-pst" do
     end
 
     it "should output the actual attached files" do
-      xpath("//Document/Files/File[@FileType='Native']") { true }
-      # TODO: ExternalFile with appropriate attributes
+      xpath("//Document/Files/File[@FileType='Native']") do
+        xpath("./ExternalFile" +
+              "[@FileName='d0000004.txt']" +
+              "[@FileSize='15']" +
+              "[@Hash='78016cea74c298162366b9f86bfc3b16']") { true }
+      end
       # TODO: Actual file on disk
     end
   end

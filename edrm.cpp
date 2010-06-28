@@ -108,13 +108,18 @@ namespace {
 
     void output_document(xml_context &x, const document &d) {
         x.lt("Document").attr("DocType", d.type_string()).gt();
-        x.lt("Tags").gt();
-        
+
+        x.lt("Files").gt();
+        if (d.has_native())
+            x.lt("File").attr("FileType", L"Native").slash_gt();
+        x.end_tag("Files");
+
+        x.lt("Tags").gt();        
         document::tag_iterator ti(d.tag_begin());
         for (; ti != d.tag_end(); ++ti)
             output_tag(x, ti);
-
         x.end_tag("Tags");
+
         x.end_tag("Document");
     }
 

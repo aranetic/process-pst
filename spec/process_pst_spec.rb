@@ -25,6 +25,7 @@ describe "process-pst" do
   context "sample1.pst" do
     before do
       @result = process_pst("pstsdk/test/sample1.pst", "out")
+      _assert_xml(File.read(loadfile))
     end
 
     it "should succeed if passed valid arguments" do
@@ -36,7 +37,6 @@ describe "process-pst" do
     end
 
     it "should generate a valid EDRM loadfile" do
-      _assert_xml(File.read(loadfile))
       xpath("/Root[@DataInterchangeType='Update']/Batch") do
         xpath("./Documents") { true }
         xpath("./Relationships") { true }
@@ -44,7 +44,6 @@ describe "process-pst" do
     end
 
     it "should output metadata for each message and attachment in the PST" do
-      _assert_xml(File.read(loadfile))
       xpath("//Document[@DocType='Message']/Tags") do
         xpath("./Tag[@TagName='#Subject']" +
               "[@TagValue='Here is a sample message']" +
@@ -59,10 +58,12 @@ describe "process-pst" do
   end
 
   context "four_nesting_levels.pst" do
-    it "should recurse through nested submessages" do
+    before do
       process_pst("test_data/four_nesting_levels.pst", "out")
-      _assert_xml(File.read(loadfile))
+      _assert_xml(File.read(loadfile))       
+    end
 
+    it "should recurse through nested submessages" do
       subjects = ["Outermost message", "Middle message", "Innermost message"]
       subjects.each do |s|
         xpath("//Tag[@TagName='#Subject'][@TagValue='#{s}']") { true }
@@ -73,5 +74,7 @@ describe "process-pst" do
         xpath("//Tag[@TagName='#FileName'][@TagValue='#{s}']") { true }
       end
     end
+
+    # it "should output file attachments"
   end
 end

@@ -80,7 +80,7 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     assert(from_iso_string("20100624T191619Z") ==
            any_cast<ptime>(d[L"#DateReceived"]));
     assert(false == any_cast<bool>(d[L"#HasAttachments"]));
-    assert(0 == any_cast<size_t>(d[L"#AttachmentCount"]));
+    assert(0 == any_cast<int32_t>(d[L"#AttachmentCount"]));
     assert(d[L"#AttachmentNames"].empty());
     assert(false == any_cast<bool>(d[L"#ReadFlag"]));
     assert(false == any_cast<bool>(d[L"#ImportanceFlag"]));
@@ -131,7 +131,7 @@ void document_from_message_should_include_flag_status() {
     pst test_pst(L"test_data/flags_jane_doe.pst");
     message m(find_by_subject(test_pst, L"Needs response"));
     document d(m);
-    assert(2 == any_cast<int32_t>(d[L"#FlagStatus"]));
+    assert(L"2" == any_cast<wstring>(d[L"#FlagStatus"]));
 }
 
 void document_from_message_should_include_attachment_metadata() {
@@ -140,7 +140,7 @@ void document_from_message_should_include_attachment_metadata() {
     document d(m);
 
     assert(true == any_cast<bool>(d[L"#HasAttachments"]));
-    assert(1 == any_cast<size_t>(d[L"#AttachmentCount"]));
+    assert(1 == any_cast<int32_t>(d[L"#AttachmentCount"]));
 
     vector<wstring> names(any_cast<vector<wstring> >(d[L"#AttachmentNames"]));
     assert(1 == names.size());
@@ -167,7 +167,7 @@ void document_from_attachment_should_fill_in_basic_edrm_data() {
     // MimeType
     assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#FileName"]));
     assert(L"jpg" == any_cast<wstring>(d[L"#FileExtension"]));
-    assert(93142 == any_cast<uint64_t>(d[L"#FileSize"]));
+    assert(93142 == any_cast<int64_t>(d[L"#FileSize"]));
     // Unsupported: #DateCreated, #DateAccessed, #DateModified, #DatePrinted
     // (plus Microsoft Office metadata, but that's not our problem for now)
 }

@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/lexical_cast.hpp>
 #include <pstsdk/pst.h>
 
 #include "utilities.h"
@@ -7,6 +8,7 @@
 
 using namespace std;
 using boost::any;
+using boost::lexical_cast;
 using namespace boost::posix_time;
 using namespace pstsdk;
 
@@ -111,10 +113,10 @@ void document::initialize_from_message(const pstsdk::message &m) {
 
     if (m.get_attachment_count() == 0) {
         (*this)[L"#HasAttachments"] = false;
-        (*this)[L"#AttachmentCount"] = size_t(0);
+        (*this)[L"#AttachmentCount"] = int32_t(0);
     } else {
         (*this)[L"#HasAttachments"] = true;
-        (*this)[L"#AttachmentCount"] = size_t(m.get_attachment_count());
+        (*this)[L"#AttachmentCount"] = int32_t(m.get_attachment_count());
 
         vector<wstring> names;
         message::attachment_iterator i(m.attachment_begin());
@@ -136,7 +138,8 @@ void document::initialize_from_message(const pstsdk::message &m) {
         (*this)[L"#MessageClass"] = props.read_prop<wstring>(0x001a);
 
     if (props.prop_exists(0x1090)) // PidTagFlagStatus
-        (*this)[L"#FlagStatus"] = props.read_prop<int32_t>(0x1090);
+        (*this)[L"#FlagStatus"] =
+            lexical_cast<wstring>(props.read_prop<int32_t>(0x1090));
 
     if (has_prop(m, &message::get_body)) {
         m_has_text = true;
@@ -167,7 +170,7 @@ document::document(const pstsdk::attachment &a) {
 
         (*this)[L"#FileName"] = filename;
         (*this)[L"#FileExtension"] = extension;
-        (*this)[L"#FileSize"] = uint64_t(native().size());
+        (*this)[L"#FileSize"] = int64_t(native().size());
     }
 }
 

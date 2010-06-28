@@ -82,7 +82,9 @@ describe "process-pst" do
               "[@FileSize='15']" +
               "[@Hash='78016cea74c298162366b9f86bfc3b16']") { true }
       end
-      # TODO: Actual file on disk
+      path = build_path("out/d0000004.txt")
+      File.exist?(path).should == true
+      File.size(path).should == 15
     end
   end
 end

@@ -130,6 +130,13 @@ namespace {
             .attr("Hash", hash)
             .slash_gt();
         x.end_tag("File");
+
+        path native_path(edrm.out_dir() / wstring_to_string(filename));
+        ofstream f(native_path.file_string().c_str(),
+                   ios_base::out | ios_base::trunc | ios_base::binary);
+        f.write(reinterpret_cast<const char *>(&d.native()[0]),
+                d.native().size());
+        f.close();
     }
 
     void output_document(edrm_context &edrm, const document &d) {

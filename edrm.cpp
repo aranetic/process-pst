@@ -7,6 +7,7 @@
 #include <pstsdk/pst.h>
 
 #include "utilities.h"
+#include "document.h"
 #include "edrm.h"
 
 using namespace std;
@@ -15,6 +16,7 @@ using boost::any_cast;
 using namespace boost::gregorian;
 using namespace boost::posix_time;
 using namespace boost::filesystem;
+using namespace pstsdk;
 
 /// Return an official EDRM TagDataType string for 'value'.
 wstring edrm_tag_data_type(const any &value) {
@@ -85,14 +87,31 @@ wstring edrm_tag_value(const any &value) {
     throw runtime_error("Unable to output EDRM TagValue for value");
 }
 
-void convert_to_edrm(shared_ptr<pstsdk::pst> pst_file, ostream &loadfile,
+void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
                      const path &output_directory) {
     loadfile << "<?xml version='1.0' encoding='UTF-8'?>" << endl
              << "<Root DataInterchangeType='Update'>" << endl
              << "  <Batch>" << endl
              << "    <Documents>" << endl;
 
-    // TODO: Output documents.
+    pst::message_iterator mi(pst_file->message_begin());
+    for (; mi != pst_file->message_end(); ++mi) {
+        document d(*mi);
+        loadfile << "      <Document DocType='Message'>" << endl
+                 << "        <Tags>" << endl;
+        
+        document::tag_iterator ti(d.tag_begin());
+        for (; ti != d.tag_end(); ++ti) {
+            loadfile << "          <Tag TagName='" << xml_quote(ti->first)
+                     << "' TagValue='" << xml_quote(edrm_tag_value(ti->second))
+                     << "' TagDataType='"
+                     << xml_quote(edrm_tag_data_type(ti->second)) << "' />"
+                     << endl;
+        }
+
+        loadfile << "        </Tags>" << endl
+                 << "      </Document>" << endl;
+    }
 
     loadfile << "    </Documents>" << endl
              << "    <Relationships>" << endl

@@ -42,5 +42,16 @@ describe "process-pst" do
         xpath("./Relationships") { true }
       end
     end
+
+    it "should output metadata for each message in the PST" do
+      _assert_xml(File.read(loadfile))
+      assert do
+        xpath("//Document[@DocType='Message']/Tags") do
+          xpath("./Tag[@TagName='#Subject']" +
+                "[@TagValue='Here is a sample message']" +
+                "[@TagDataType='Text']") { true }
+        end
+      end
+    end
   end
 end

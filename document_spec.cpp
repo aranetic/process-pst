@@ -70,11 +70,17 @@ void document_tags_should_be_accessible_using_subscript_operator() {
     assert(L"Hello!" == any_cast<wstring>(d[L"#Subject"]));
     d[L"#Subject"] = wstring(L"Hello, again!");
     assert(L"Hello, again!" == any_cast<wstring>(d[L"#Subject"]));
+
+    const document &cd(d);
+    assert(L"Hello, again!" == any_cast<wstring>(cd[L"#Subject"]));
 }
 
 void document_tags_should_default_to_boost_any_empty() {
     document d;
     assert(d[L"#Nonexistent"].empty());
+
+    const document &cd(d);
+    assert(cd[L"#Nonexistent"].empty());
 }
 
 void document_tags_should_support_iteration() {

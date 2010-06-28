@@ -51,6 +51,7 @@ public:
         { m_content_type = ct; return *this; }
 
     boost::any &operator[](const std::wstring &key);
+    const boost::any operator[](const std::wstring &key) const;
 
     tag_iterator tag_begin() const { return m_tags.begin(); }
     tag_iterator tag_end() const { return m_tags.end(); }

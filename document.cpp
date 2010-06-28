@@ -200,3 +200,11 @@ wstring document::type_string() const {
 any &document::operator[](const wstring &key) {
     return m_tags[key];
 }
+
+const any document::operator[](const wstring &key) const {
+    tag_map::const_iterator found(m_tags.find(key));
+    if (found == m_tags.end())
+        return any();
+    else
+        return found->second;
+}

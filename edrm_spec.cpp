@@ -44,7 +44,8 @@ void edrm_tag_value_should_format_value_appropriately() {
     assert(L"Foo;Bar" == edrm_tag_value(v));
 
     assert(L"-1" == edrm_tag_value(int32_t(-1)));
-    // ptime
+    assert(L"2002-01-31T23:59:59Z" ==
+           edrm_tag_value(from_iso_string("20020131T235959Z")));
     assert(L"true" == edrm_tag_value(true));
     assert(L"false" == edrm_tag_value(false));
     assert(L"-1" == edrm_tag_value(int64_t(-1)));

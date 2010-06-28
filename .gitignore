@@ -6,6 +6,7 @@ cmake_install.cmake
 CTestTestfile.cmake
 Makefile
 Testing
+.DS_Store
 /spike
 /process-pst
 /CppTests.cpp

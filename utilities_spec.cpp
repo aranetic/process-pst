@@ -3,12 +3,14 @@
 
 using namespace std;
 
-void string_to_wstring_should_handle_empty_string() {
+void string_to_wstring_should_convert_native_8_bit_to_unicode() {
     assert(L"" == string_to_wstring(""));
+    assert(L"text" == string_to_wstring("text"));
 }
 
-void string_to_wstring_should_convert_ascii_to_wstring() {
-    assert(L"text" == string_to_wstring("text"));
+void wstring_to_string_should_convert_unicode_to_native_8_bit() {
+    assert("" == wstring_to_string(L""));
+    assert("text" == wstring_to_string(L"text"));
 }
 
 void wstring_to_utf8_should_convert_to_utf8() {
@@ -56,8 +58,8 @@ void xml_quote_should_convert_wstring_and_escape_metacharacters() {
 }
 
 int utilities_spec(int argc, char **argv) {
-    string_to_wstring_should_handle_empty_string();
-    string_to_wstring_should_convert_ascii_to_wstring();
+    string_to_wstring_should_convert_native_8_bit_to_unicode();
+    wstring_to_string_should_convert_unicode_to_native_8_bit();
 
     wstring_to_utf8_should_convert_to_utf8();
 

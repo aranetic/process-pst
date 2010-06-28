@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// Convert from the current locale's 8-bit encoding to a wstring.
 wstring string_to_wstring(const string &str) {
     size_t output_length = ::mbstowcs(NULL, str.c_str(), 0);
     if (output_length == size_t(-1))
@@ -21,8 +22,21 @@ wstring string_to_wstring(const string &str) {
     if (output_length == size_t(-1))
         throw runtime_error("Cannot convert malformed string to wstring");
 
-    wstring wstr(wvec.begin(), wvec.end());
-    return wstr;
+    return wstring(wvec.begin(), wvec.end());
+}
+
+// Convert from a wstring to the current locale's 8-bit encoding.
+string wstring_to_string(const wstring &wstr) {
+    size_t output_length = ::wcstombs(NULL, wstr.c_str(), 0);
+    if (output_length == size_t(-1))
+        throw runtime_error("Cannot convert malformed wstring to string");
+
+    vector<char> vec(output_length);
+    output_length = ::wcstombs(&vec[0], wstr.c_str(), vec.size());
+    if (output_length == size_t(-1))
+        throw runtime_error("Cannot convert malformed wstring to string");
+
+    return string(vec.begin(), vec.end());
 }
 
 namespace {
@@ -32,6 +46,8 @@ namespace {
     const char *wchar_t_encoding = "UTF-32LE";
 }
 
+/// Convert from a wstring to a UTF-8 encoded string, regardless of the
+/// current locale's encoding.
 string wstring_to_utf8(const wstring &wstr) {
     // Handle the empty string, which breaks iconv on some platforms.
     if (wstr.empty())

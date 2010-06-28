@@ -90,10 +90,10 @@ wstring edrm_tag_value(const any &value) {
 
 /// Generate a unique document identifier.  We try to keep these to 8
 /// characters for the few remaining legal shops that use 8.3 filenames.
-string edrm_context::next_doc_id() {
+wstring edrm_context::next_doc_id() {
     size_t id = m_next_doc_id++;
-    ostringstream out;
-    out << "d" << setw(7) << setfill('0') << id;
+    wostringstream out;
+    out << L"d" << setw(7) << setfill(L'0') << id;
     return out.str();
 }
 

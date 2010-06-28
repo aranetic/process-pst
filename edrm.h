@@ -25,7 +25,7 @@ public:
 
     xml_context &loadfile() { return m_loadfile; }
     boost::filesystem::path out_dir() const { return m_out_dir; }
-    std::string next_doc_id();
+    std::wstring next_doc_id();
 };
 
 extern void convert_to_edrm(std::shared_ptr<pstsdk::pst> pst_file,

@@ -80,8 +80,8 @@ void edrm_context_should_have_output_directory() {
 void edrm_context_should_generate_doc_ids() {
     ostringstream out;
     edrm_context edrm(out, path());
-    assert("d0000001" == edrm.next_doc_id());
-    assert("d0000002" == edrm.next_doc_id());
+    assert(L"d0000001" == edrm.next_doc_id());
+    assert(L"d0000002" == edrm.next_doc_id());
 }
 
 int edrm_spec(int argc, char **argv) {

@@ -4,14 +4,17 @@
 #include <boost/any.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
+#include <pstsdk/pst.h>
 
 #include "utilities.h"
+#include "edrm.h"
 
 using namespace std;
 using boost::any;
 using boost::any_cast;
 using namespace boost::gregorian;
 using namespace boost::posix_time;
+using namespace boost::filesystem;
 
 /// Return an official EDRM TagDataType string for 'value'.
 wstring edrm_tag_data_type(const any &value) {
@@ -80,4 +83,20 @@ wstring edrm_tag_value(const any &value) {
         return to_tag_value(any_cast<int64_t>(value));
 
     throw runtime_error("Unable to output EDRM TagValue for value");
+}
+
+void convert_to_edrm(shared_ptr<pstsdk::pst> pst_file, ostream &loadfile,
+                     const path &output_directory) {
+    loadfile << "<?xml version='1.0' encoding='UTF-8'?>" << endl
+             << "<Root DataInterchangeType='Update'>" << endl
+             << "  <Batch>" << endl
+             << "    <Documents>" << endl;
+
+    // TODO: Output documents.
+
+    loadfile << "    </Documents>" << endl
+             << "    <Relationships>" << endl
+             << "    </Relationships>" << endl
+             << "  </Batch>" << endl
+             << "</Root>" << endl;
 }

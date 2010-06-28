@@ -1,8 +1,8 @@
 #include <iostream>
 #include <pstsdk/pst.h>
-#include <boost/filesystem.hpp>
 
 #include "utilities.h"
+#include "edrm.h"
 
 using namespace std;
 using namespace pstsdk;
@@ -18,8 +18,9 @@ int main(int argc, char **argv) {
     path output_directory_path(argv[2]);
 
     // Open our PST.
+    shared_ptr<pst> pst_file;
     try {
-        pst pst_db(string_to_wstring(pst_path));
+        pst_file.reset(new pst(string_to_wstring(pst_path)));
     } catch (exception &e) {
         wcerr << L"Could not open PST: " << string_to_wstring(e.what()) << endl;
         exit(1);
@@ -35,17 +36,9 @@ int main(int argc, char **argv) {
     // Create an empty loadfile.  We'll fill this in shortly.
     create_directory(output_directory_path);
     path loadfile_path(output_directory_path / "edrm-loadfile.xml");
-    ofstream file(loadfile_path.string());
-    file << "<?xml version='1.0' encoding='UTF-8'?>" << endl
-         << "<Root DataInterchangeType='Update'>" << endl
-         << "  <Batch>" << endl
-         << "    <Documents>" << endl
-         << "    </Documents>" << endl
-         << "    <Relationships>" << endl
-         << "    </Relationships>" << endl
-         << "  </Batch>" << endl
-         << "</Root>" << endl;
-    file.close();
+    ofstream loadfile(loadfile_path.string());
+    convert_to_edrm(pst_file, loadfile, output_directory_path);
+    loadfile.close();
 
     return 0;
 }

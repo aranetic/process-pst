@@ -43,6 +43,7 @@ public:
 
     document_type type() const { return m_type; }
     document &set_type(document_type t) { m_type = t; return *this; }
+    std::wstring type_string() const;
 
     std::wstring content_type() const { return m_content_type; }
     document &set_content_type(const std::wstring &ct)

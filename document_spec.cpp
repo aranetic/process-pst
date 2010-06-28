@@ -46,6 +46,23 @@ void document_should_have_an_id_a_type_and_a_content_type() {
     assert(L"message/rfc822" == d.content_type());
 }
 
+void document_should_be_able_to_translate_type_to_string() {
+    document d;
+    d.set_type(document::message);
+    assert(L"Message" == d.type_string());
+    d.set_type(document::file);
+    assert(L"File" == d.type_string());
+
+    bool caught_exception = false;
+    try {
+        d.set_type(document::unknown);
+        d.type_string();
+    } catch (exception &) {
+        caught_exception = true;
+    }
+    assert(caught_exception);
+}
+
 void document_tags_should_be_accessible_using_subscript_operator() {
     document d;
     d[L"#Subject"] = wstring(L"Hello!");

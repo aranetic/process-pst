@@ -174,6 +174,15 @@ document::document(const pstsdk::attachment &a) {
     }
 }
 
+wstring document::type_string() const {
+    switch (type()) {
+        case message: return L"Message";
+        case file: return L"File";
+        default:
+            throw runtime_error("Cannot convert document type to string");
+    }
+}
+
 any &document::operator[](const wstring &key) {
     return m_tags[key];
 }

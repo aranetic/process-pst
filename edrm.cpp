@@ -98,15 +98,17 @@ string edrm_context::next_doc_id() {
 }
 
 namespace {
-    void output_tag(xml_context &x, document::tag_iterator kv) {
-        x.lt("Tag")
+    void output_tag(edrm_context &edrm, document::tag_iterator kv) {
+        edrm.loadfile().lt("Tag")
             .attr("TagName", kv->first)
             .attr("TagValue", edrm_tag_value(kv->second))
             .attr("TagDataType", edrm_tag_data_type(kv->second))
             .slash_gt();
     }
 
-    void output_document(xml_context &x, const document &d) {
+    void output_document(edrm_context &edrm, const document &d) {
+        xml_context &x(edrm.loadfile());
+
         x.lt("Document").attr("DocType", d.type_string()).gt();
 
         x.lt("Files").gt();
@@ -117,34 +119,35 @@ namespace {
         x.lt("Tags").gt();        
         document::tag_iterator ti(d.tag_begin());
         for (; ti != d.tag_end(); ++ti)
-            output_tag(x, ti);
+            output_tag(edrm, ti);
         x.end_tag("Tags");
 
         x.end_tag("Document");
     }
 
-    void output_message(xml_context &x, const message &m);
+    void output_message(edrm_context &edrm, const message &m);
 
-    void output_attachment(xml_context &x, const attachment &a) {
+    void output_attachment(edrm_context &edrm, const attachment &a) {
         if (a.is_message())
-            output_message(x, a.open_as_message());
+            output_message(edrm, a.open_as_message());
         else
-            output_document(x, document(a));
+            output_document(edrm, document(a));
     }
 
-    void output_message(xml_context &x, const message &m) {
-        output_document(x, document(m));
+    void output_message(edrm_context &edrm, const message &m) {
+        output_document(edrm, document(m));
         if (m.get_attachment_count() > 0) {
             message::attachment_iterator ai(m.attachment_begin());
             for (; ai != m.attachment_end(); ++ai)
-                output_attachment(x, *ai);
+                output_attachment(edrm, *ai);
         }
     }
 }
 
 void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
                      const path &output_directory) {
-    xml_context x(loadfile);
+    edrm_context edrm(loadfile, output_directory);
+    xml_context &x(edrm.loadfile());
 
     x.lt("Root").attr("DataInterchangeType", L"Update").gt();
     x.lt("Batch").gt();
@@ -152,7 +155,7 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
 
     pst::message_iterator mi(pst_file->message_begin());
     for (; mi != pst_file->message_end(); ++mi)
-        output_message(x, *mi);
+        output_message(edrm, *mi);
 
     x.end_tag("Documents");
     x.lt("Relationships").gt();

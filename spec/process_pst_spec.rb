@@ -75,6 +75,18 @@ describe "process-pst" do
       end
     end
 
+    it "should output attachment relationships" do
+      relationships =
+        [%w(d0000001 d0000002), %w(d0000002 d0000003), %w(d0000003 d0000004)]
+      xpath("//Relationships") do
+        relationships.each do |r|
+          parent, child = r
+          xpath("./Relationship[@Type='Attachment']" +
+                "[@ParentDocID='#{parent}'][@ChildDocID='#{child}']") { true }
+        end
+      end
+    end
+
     it "should output a text file for each email" do
       xpath("//Document/Files/File[@FileType='Text']") do
         xpath("./ExternalFile[@FileName='d0000001.txt']") { true }

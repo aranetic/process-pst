@@ -193,27 +193,33 @@ namespace {
         x.end_tag("Document");
     }
 
-    void output_message(edrm_context &edrm, const message &m);
+    void output_message(edrm_context &edrm, const message &m,
+                        const document *attached_to = NULL);
 
-    void output_attachment(edrm_context &edrm, const attachment &a) {
+    void output_attachment(edrm_context &edrm, const attachment &a,
+                           const document *attached_to) {
         if (a.is_message()) {
-            output_message(edrm, a.open_as_message());
+            output_message(edrm, a.open_as_message(), attached_to);
         } else {
             document d(a);
             d.set_id(edrm.next_doc_id());
             output_document(edrm, d);
+            edrm.relationship(L"Attachment", attached_to->id(), d.id());
         }
     }
 
-    void output_message(edrm_context &edrm, const message &m) {
+    void output_message(edrm_context &edrm, const message &m,
+                        const document *attached_to) {
         document d(m);
         d.set_id(edrm.next_doc_id());
         output_document(edrm, d);
+        if (attached_to)
+            edrm.relationship(L"Attachment", attached_to->id(), d.id());
 
         if (m.get_attachment_count() > 0) {
             message::attachment_iterator ai(m.attachment_begin());
             for (; ai != m.attachment_end(); ++ai)
-                output_attachment(edrm, *ai);
+                output_attachment(edrm, *ai, &d);
         }
     }
 }

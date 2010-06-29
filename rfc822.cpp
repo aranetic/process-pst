@@ -1,5 +1,7 @@
+#include <cctype>
 #include <algorithm>
 
+#include <boost/foreach.hpp>
 #include <boost/serialization/pfto.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
@@ -35,4 +37,14 @@ string base64(const string &input) {
         output += "=";
 
     return output;
+}
+
+/// Does 'str' contain anything other than printable ASCII characters and
+/// spaces?
+bool contains_special_characters(const string &str) {
+    BOOST_FOREACH(char c, str) {
+        if (c >= 0x80 || (!isgraph(c) && c != ' '))
+            return true;
+    }
+    return false;
 }

@@ -18,10 +18,17 @@ void base64_should_encode_string() {
     // TODO: Make sure we encode strings containing internal NULLs.
 }
 
+void contains_special_characters_should_detect_non_ascii_characters() {
+    assert(!contains_special_characters(""));
+    assert(!contains_special_characters("plain text!"));
+    assert(contains_special_characters("\t"));
+    assert(contains_special_characters("\xE2\x80\x94"));
+}
+
 int rfc822_spec(int argc, char **argv) {
     base64_should_encode_string();
 
-    //contains_special_characters_should_detect_non_ascii_characters();
+    contains_special_characters_should_detect_non_ascii_characters();
 
     //encode_email_address_should_encode_special_characters();
     //encode_freeform_header_should_encode_special_characters();

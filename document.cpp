@@ -4,6 +4,7 @@
 #include <pstsdk/pst.h>
 
 #include "utilities.h"
+#include "rfc822.h"
 #include "document.h"
 
 using namespace std;

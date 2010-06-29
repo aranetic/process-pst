@@ -85,60 +85,6 @@ string wstring_to_utf8(const wstring &wstr) {
     return string(utf8.begin(), utf8.begin() + output_size);
 }
 
-wstring rfc822_quote(const wstring &str) {
-    // We quote everything except RFC 822 "atom" characters and spaces.
-    bool needs_quoting = false;
-    for (size_t i = 0; i < str.size(); ++i) {
-        // Switch statements are reasonably fast ways to perform efficient
-        // table lookups in most compilers.
-        switch (str[i]) {
-            case L'(': case L')': case L'<': case L'>':
-            case L'@': case L',': case L';': case L':':
-            case L'"': case L'\\': case L'.': case L'[':
-            case L']':
-                needs_quoting = true;
-                break;
-        }
-
-        if (str[i] > 0x7f) {
-            needs_quoting = true;
-        } else {
-            char c = static_cast<char>(str[i]);
-            if (c != ' ' && !isgraph(c))
-                needs_quoting = true;
-        }
-
-        if (needs_quoting)
-            break;
-    }
-
-    // No quoting needed, so just return our input.
-    if (!needs_quoting)
-        return str;
-
-    // Quote it.
-    wstring out(L"\"");
-    for (size_t i = 0; i < str.size(); ++i) {
-        wchar_t w = str[i];
-        if (w == L'\\' || w == L'"')
-            out += L"\\";
-        out += w;
-    }
-    out += L"\"";
-    return out;
-}
-
-wstring rfc822_email(const wstring &display_name, const wstring &email) {
-    if (display_name.empty() && email.empty())
-        throw runtime_error("Can't build address without name or email!");
-    else if (display_name.empty() || display_name == email)
-        return email;
-    else if (email.empty())
-        return rfc822_quote(display_name);
-    else
-        return rfc822_quote(display_name) + L" <" + email + L">";
-}
-
 string md5(const vector<uint8_t> &v) {
     // Calculate the MD5 sum.
     md5_state_s pms;

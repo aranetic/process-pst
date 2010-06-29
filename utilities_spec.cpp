@@ -20,30 +20,6 @@ void wstring_to_utf8_should_convert_to_utf8() {
     assert("\xE2\x80\x94" == wstring_to_utf8(L"\u2014")); // em-dash
 }
 
-void rfc822_quote_should_quote_strings_when_necessary() {
-    assert(L"" == rfc822_quote(L""));
-    assert(L"John Smith" == rfc822_quote(L"John Smith"));
-    assert(L"\"John Q. Smith\"" == rfc822_quote(L"John Q. Smith"));
-    assert(L"\"\\\"\\\\\"" == rfc822_quote(L"\"\\"));
-    
-    wstring escape_chars(L"()<>@,;:.[]"); // Omits " and \, handled above.
-    for (size_t i = 0; i < escape_chars.size(); ++i) {
-        wstring input(escape_chars.substr(i, 1));
-        wstring expected(L"\"" + input + L"\"");
-        assert(expected == rfc822_quote(input));
-    }
-}
-
-void rfc822_email_should_build_email_addresses() {
-    assert(L"Foo <foo@bar.com>" == rfc822_email(L"Foo", L"foo@bar.com"));
-    assert(L"Foo" == rfc822_email(L"Foo", L""));
-    assert(L"\"Foo B.\"" == rfc822_email(L"Foo B.", L""));
-    assert(L"foo@bar.com" == rfc822_email(L"", L"foo@bar.com"));
-    assert(L"foo@bar.com" == rfc822_email(L"foo@bar.com", L"foo@bar.com"));
-    assert(L"\"Foo B.\" <foo@bar.com>" ==
-           rfc822_email(L"Foo B.", L"foo@bar.com"));
-}
-
 void md5_should_calculate_md5_hash_for_vector() {
     string s("Data");
     vector<uint8_t> v(s.begin(), s.end());
@@ -62,9 +38,6 @@ int utilities_spec(int argc, char **argv) {
     wstring_to_string_should_convert_unicode_to_native_8_bit();
 
     wstring_to_utf8_should_convert_to_utf8();
-
-    rfc822_quote_should_quote_strings_when_necessary();
-    rfc822_email_should_build_email_addresses();
 
     md5_should_calculate_md5_hash_for_vector();
 

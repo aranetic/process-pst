@@ -7,6 +7,7 @@
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 
+#include "utilities.h"
 #include "rfc822.h"
 
 using namespace std;
@@ -112,9 +113,41 @@ bool contains_special_characters(const string &str) {
 /// Encode a free-form RFC822 header value if necessary.  Currently, this
 /// uses B-encoding, but there's no reason why it couldn't prefer Q-encoding
 /// in some cases.
-string header_encode(const string &utf8_str) {
+string header_encode(const wstring &str) {
+    string utf8_str(wstring_to_utf8(str));
     if (contains_special_characters(utf8_str))
         return "=?UTF-8?B?" + base64(utf8_str) + "?=";
     else
         return utf8_str;
+}
+
+/// Encode an email address for use in a structured RFC822 header.
+string header_encode_email(const wstring &email) {
+    // Pass the simple cases through unchanged.  Note that if the email
+    // address contains Unicode characters, but isn't properly quoted, we
+    // just pass it straight through and hope for the best.
+    string utf8_str(wstring_to_utf8(email));
+    if (email.size() == 0 || !contains_special_characters(utf8_str) ||
+        email[0] != L'"')
+        return utf8_str;
+
+    // Parse the name back out of the email address.  This isn't terribly
+    // robust, because it assumes that our input was produced by
+    // rfc822_email.
+    wstring unquoted_name;
+    size_t i;
+    for (i = 1; i < email.size() && email[i] != L'"'; ++i) {
+        wchar_t c = email[i];
+        if (c == L'\\' && (i+1) < email.size())
+            unquoted_name += email[++i];
+        else
+            unquoted_name += c;
+    }
+    wstring remainder;
+    if (i < email.size())
+        remainder = email.substr(i+1, string::npos);
+
+    // Now that the name has been unquoted, encode it.  Note we should do
+    // something more clever with Unicode characters in 'remainder'.
+    return header_encode(unquoted_name) + wstring_to_utf8(remainder);
 }

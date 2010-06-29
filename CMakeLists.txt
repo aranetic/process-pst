@@ -29,8 +29,8 @@ endif()
 find_library(ICONV_LIBRARY NAMES iconv)
 
 # Our C++ source files, except for main.cpp.
-add_library(ProcessPstLib md5.c
-                          utilities.cpp document.cpp xml_context.cpp edrm.cpp)
+add_library(ProcessPstLib md5.c utilities.cpp document.cpp xml_context.cpp
+                          rfc822.cpp edrm.cpp)
 
 # Link our executables.
 add_executable(spike spike.cpp)
@@ -50,7 +50,7 @@ endif()
 # the generated driver.
 create_test_sourcelist(CppTestsFiles CppTests.cpp
                        utilities_spec.cpp document_spec.cpp
-                       xml_context_spec.cpp edrm_spec.cpp)
+                       xml_context_spec.cpp rfc822_spec.cpp edrm_spec.cpp)
 
 # Build a single test executable for all our C++ libraries.
 add_executable(CppTests ${CppTestsFiles})

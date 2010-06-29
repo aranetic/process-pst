@@ -101,8 +101,8 @@ int rfc822_spec(int argc, char **argv) {
     header_encode_should_encode_special_characters();
     header_encode_email_should_encode_special_characters();
 
-    //freeform_header_should_generate_a_header()
-    //email_address_header_should_generate_a_header()
+    //header_should_turn_a_string_into_a_freeform_header()
+    //header_should_turn_a_list_of_strings_into_a_structured_header()
 
     //document_to_rfc822_should_include_headers_text_and_html();
 

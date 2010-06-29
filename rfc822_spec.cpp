@@ -86,6 +86,8 @@ void header_encode_email_should_encode_special_characters() {
            header_encode_email(L"\"Foo\u2014Bar\""));
     assert(header_encode(L" \" \u2014 \\ ") ==
            header_encode_email(L"\" \\\" \u2014 \\\\ \""));
+    assert(header_encode(L"\u2014") ==
+           header_encode_email(L"\"\u2014"));
 }
 
 int rfc822_spec(int argc, char **argv) {

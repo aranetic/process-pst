@@ -48,3 +48,13 @@ bool contains_special_characters(const string &str) {
     }
     return false;
 }
+
+/// Encode a free-form RFC822 header value if necessary.  Currently, this
+/// uses B-encoding, but there's no reason why it couldn't prefer Q-encoding
+/// in some cases.
+string header_encode(const string &utf8_str) {
+    if (contains_special_characters(utf8_str))
+        return "=?UTF-8?B?" + base64(utf8_str) + "?=";
+    else
+        return utf8_str;
+}

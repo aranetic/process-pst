@@ -25,16 +25,24 @@ void contains_special_characters_should_detect_non_ascii_characters() {
     assert(contains_special_characters("\xE2\x80\x94"));
 }
 
+void header_encode_should_encode_special_characters() {
+    assert("" == header_encode(""));
+    assert("Re: The fridge" == header_encode("Re: The fridge"));
+
+    string utf8("Re: The fridge\xE2\x80\x94it's evil!");
+    assert("=?UTF-8?B?" + base64(utf8) + "?=" == header_encode(utf8));
+}
+
 int rfc822_spec(int argc, char **argv) {
     base64_should_encode_string();
 
     contains_special_characters_should_detect_non_ascii_characters();
 
+    header_encode_should_encode_special_characters();
     //encode_email_address_should_encode_special_characters();
-    //encode_freeform_header_should_encode_special_characters();
 
-    //email_address_header_should_generate_a_header()
     //freeform_header_should_generate_a_header()
+    //email_address_header_should_generate_a_header()
 
     //document_to_rfc822_should_include_headers_text_and_html();
 

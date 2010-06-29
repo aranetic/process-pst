@@ -116,27 +116,35 @@ namespace {
             .slash_gt();
     }
 
-    void output_native_file(edrm_context &edrm, const document &d) {
+    void output_file(edrm_context &edrm, const wstring &edrm_file_type,
+                     const wstring &filename, const vector<uint8_t> &data) {
+        wstring size(lexical_cast<wstring>(data.size()));
+        wstring hash(string_to_wstring(md5(data)));
+
         xml_context &x(edrm.loadfile());
-
-        wstring filename(native_filename(d));
-        wstring size(lexical_cast<wstring>(d.native().size()));
-        wstring hash(string_to_wstring(md5(d.native())));
-
-        x.lt("File").attr("FileType", L"Native").gt();
+        x.lt("File").attr("FileType", edrm_file_type).gt();
         x.lt("ExternalFile")
             .attr("FileName", filename)
             .attr("FileSize", size)
             .attr("Hash", hash)
             .slash_gt();
         x.end_tag("File");
-
+        
         path native_path(edrm.out_dir() / wstring_to_string(filename));
         ofstream f(native_path.file_string().c_str(),
                    ios_base::out | ios_base::trunc | ios_base::binary);
-        f.write(reinterpret_cast<const char *>(&d.native()[0]),
-                d.native().size());
+        f.write(reinterpret_cast<const char *>(&data[0]), data.size());
         f.close();
+    }
+
+    void output_native_file(edrm_context &edrm, const document &d) {
+        output_file(edrm, L"Native", native_filename(d), d.native());
+    }
+
+    void output_text_file(edrm_context &edrm, const document &d) {
+        string utf8_str(wstring_to_utf8(d.text()));
+        vector<uint8_t> utf8(utf8_str.begin(), utf8_str.end());
+        output_file(edrm, L"Text", d.id() + L".txt", utf8);
     }
 
     void output_document(edrm_context &edrm, const document &d) {
@@ -150,6 +158,8 @@ namespace {
         x.lt("Files").gt();
         if (d.has_native())
             output_native_file(edrm, d);
+        if (d.has_text())
+            output_text_file(edrm, d);
         x.end_tag("Files");
 
         x.lt("Tags").gt();        

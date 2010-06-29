@@ -155,6 +155,10 @@ void document::initialize_from_message(const pstsdk::message &m) {
             lexical_cast<wstring>(props.read_prop<int32_t>(0x1090));
 
     if (has_prop(m, &message::get_body)) {
+        // TODO: Do we want to merge in some of our headers here?  Ideally,
+        // we'd also so something about text bodies that have no relation
+        // to the HTML/RTF body, but that will require enormously more
+        // code.
         m_has_text = true;
         m_text = m.get_body();
     }

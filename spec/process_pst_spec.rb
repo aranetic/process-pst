@@ -75,6 +75,14 @@ describe "process-pst" do
       end
     end
 
+    it "should output a text file for each email" do
+      xpath("//Document/Files/File[@FileType='Text']") do
+        xpath("./ExternalFile[@FileName='d0000001.txt']") { true }
+      end
+      path = build_path("out/d0000001.txt")
+      File.exist?(path).should == true
+    end
+
     it "should output the actual attached files" do
       xpath("//Document/Files/File[@FileType='Native']") do
         xpath("./ExternalFile" +

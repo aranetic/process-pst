@@ -99,6 +99,28 @@ wstring edrm_context::next_doc_id() {
     return out.str();
 }
 
+void edrm_context::relationship(const wstring &type,
+                                const wstring &parent_doc_id,
+                                const wstring &child_doc_id) {
+    relationship_info r(type, parent_doc_id, child_doc_id);
+    m_relationships.push_back(r);
+}
+
+void edrm_context::output_relationships() {
+    xml_context &x(loadfile());
+    x.lt("Relationships").gt();
+    
+    BOOST_FOREACH(const relationship_info &r, m_relationships) {
+        x.lt("Relationship")
+            .attr("Type", r.type)
+            .attr("ParentDocID", r.parent_doc_id)
+            .attr("ChildDocID", r.child_doc_id)
+            .slash_gt();
+    }
+
+    x.end_tag("Relationships");
+}
+
 namespace {
     wstring native_filename(const document &d) {
         wstring filename(d.id());
@@ -210,8 +232,7 @@ void convert_to_edrm(shared_ptr<pst> pst_file, ostream &loadfile,
         output_message(edrm, *mi);
 
     x.end_tag("Documents");
-    x.lt("Relationships").gt();
-    x.end_tag("Relationships");
+    edrm.output_relationships();
     x.end_tag("Batch");
     x.end_tag("Root");
 }

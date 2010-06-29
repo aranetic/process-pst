@@ -84,6 +84,22 @@ void edrm_context_should_generate_doc_ids() {
     assert(L"d0000002" == edrm.next_doc_id());
 }
 
+void edrm_context_should_store_relations_and_output_later() {
+    ostringstream out;
+    edrm_context edrm(out, path());
+    edrm.relationship(L"Attachment", L"d1", L"d2");
+    edrm.relationship(L"Discussion", L"d1", L"d3");
+    edrm.output_relationships();
+
+    const char *expected =
+        "<?xml version='1.0' encoding='UTF-8'?>\n"
+        "<Relationships>\n"
+        "  <Relationship Type='Attachment' ParentDocID='d1' ChildDocID='d2'/>\n"
+        "  <Relationship Type='Discussion' ParentDocID='d1' ChildDocID='d3'/>\n"
+        "</Relationships>\n";
+    assert(expected == out.str());
+}
+
 int edrm_spec(int argc, char **argv) {
     edrm_tag_data_type_should_infer_type_from_value();
     edrm_tag_data_type_should_raise_error_if_type_unknown();
@@ -94,6 +110,7 @@ int edrm_spec(int argc, char **argv) {
     edrm_context_should_have_xml_context_for_loadfile();
     edrm_context_should_have_output_directory();
     edrm_context_should_generate_doc_ids();
+    edrm_context_should_store_relations_and_output_later();
 
     return 0;
 }

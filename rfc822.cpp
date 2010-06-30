@@ -209,12 +209,23 @@ void document_to_rfc822(ostream &out, const document &d) {
         out << header("CC", any_cast<vector<wstring> >(d[L"#CC"])) << crlf;
     if (!d[L"#BCC"].empty())
         out << header("BCC", any_cast<vector<wstring> >(d[L"#BCC"])) << crlf;
-    out << "X-Note: Exported from PST by "
+    out << "MIME-Version: 1.0" << crlf
+        << "Content-Type: multipart/alternative; boundary=\"=_boundary\""
+        << crlf
+        << "X-Note: Exported from PST by "
         << "http://github.com/aranetic/process-pst" << crlf;
     if (!d[L"#Header"].empty())
         out << "X-Note: See load file metadata for original headers" << crlf;
-
-
     out << crlf;
+
+    out << "--=_boundary" << crlf
+        << "Content-Type: text/plain; charset=UTF-8" << crlf
+        << "Content-Transfer-Encoding: base64" << crlf
+        << crlf
+        << "--=_boundary" << crlf
+        << "Content-Type: text/html" << crlf
+        << "Content-Transfer-Encoding: base64" << crlf
+        << crlf
+        << "--=_boundary--" << crlf;
 }
 

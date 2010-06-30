@@ -149,10 +149,22 @@ void document_to_rfc822_should_include_headers_text_and_html() {
         "CC: Baz <baz@example.com>,\r\n"
         "  Moby <moby@example.com>\r\n"
         "BCC: Quux <quux@example.com>\r\n"
+        "MIME-Version: 1.0\r\n"
+        "Content-Type: multipart/alternative; boundary=\"=_boundary\"\r\n"
         "X-Note: Exported from PST by"
         " http://github.com/aranetic/process-pst\r\n"
         "X-Note: See load file metadata for original headers\r\n"
-        "\r\n";
+        "\r\n"
+        "--=_boundary\r\n"
+        "Content-Type: text/plain; charset=UTF-8\r\n"
+        "Content-Transfer-Encoding: base64\r\n"
+        "\r\n"
+        "--=_boundary\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Transfer-Encoding: base64\r\n"
+        "\r\n"
+        "--=_boundary--\r\n";
+    
     ostringstream out;
     document_to_rfc822(out, d);
     assert(expected == out.str());

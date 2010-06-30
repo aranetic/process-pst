@@ -5,3 +5,4 @@ source :gemcutter
 gem 'rspec', '1.3.0'
 gem 'assert2', '0.5.5'
 gem 'nokogiri', '>= 1.4.2' # for assert2
+gem 'mail', '2.2.5'

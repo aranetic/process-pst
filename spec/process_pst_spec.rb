@@ -1,6 +1,7 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 require 'assert2/xpath'
+require 'mail'
 
 describe "process-pst" do
   include Test::Unit::Assertions # for assert2/xpath
@@ -93,6 +94,16 @@ describe "process-pst" do
       end
       path = build_path("out/d0000001.eml")
       File.exist?(path).should == true
+    end
+
+    it "should generate valid *.eml files" do
+      mail = Mail.read(build_path('out/d0000001.eml'))
+      mail.from.should == ["pst-test-1@aranetic.com"]
+      mail.to.should == ["pst-test-2@aranetic.com"]
+      mail.subject.should == "Outermost message"
+      mail.should be_multipart
+      mail.parts.length.should >= 2
+      mail.parts[0].body.should match(/This is the outmost message/)
     end
 
     it "should output the actual attached files" do

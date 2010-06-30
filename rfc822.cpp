@@ -9,10 +9,13 @@
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "utilities.h"
 #include "rfc822.h"
+#include "utilities.h"
+#include "document.h"
 
 using namespace std;
+using boost::any;
+using boost::any_cast;
 using namespace boost::archive::iterators;
 using namespace boost::posix_time;
 using namespace boost::gregorian;
@@ -178,6 +181,7 @@ string header(const string &name, const vector<wstring> &emails) {
     return out.str();
 }
 
+/// Encode a header containing a date & time.
 string header(const string &name, const ptime &time) {
     ostringstream out;
     date d(time.date());
@@ -186,3 +190,25 @@ string header(const string &name, const ptime &time) {
         << " " << to_simple_string(time.time_of_day()) << " GMT";
     return out.str();
 }
+
+namespace {
+    const char *crlf("\r\n");
+}
+
+/// Convert a document into an RFC822-format email message.
+void document_to_rfc822(ostream &out, const document &d) {
+    if (!d[L"#From"].empty())
+        out << header("From", any_cast<vector<wstring> >(d[L"#From"])) << crlf;
+    if (!d[L"#Subject"].empty())
+        out << header("Subject", any_cast<wstring>(d[L"#Subject"])) << crlf;
+    if (!d[L"#DateSent"].empty())
+        out << header("Date", any_cast<ptime>(d[L"#DateSent"])) << crlf;
+    if (!d[L"#To"].empty())
+        out << header("To", any_cast<vector<wstring> >(d[L"#To"])) << crlf;
+    if (!d[L"#CC"].empty())
+        out << header("CC", any_cast<vector<wstring> >(d[L"#CC"])) << crlf;
+    if (!d[L"#BCC"].empty())
+        out << header("BCC", any_cast<vector<wstring> >(d[L"#BCC"])) << crlf;
+    out << crlf;
+}
+

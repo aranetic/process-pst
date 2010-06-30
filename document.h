@@ -5,7 +5,10 @@
 #include <string>
 #include <boost/any.hpp>
 
-namespace pstsdk { class message; }
+namespace pstsdk {
+    class message;
+    class attachment;
+}
 
 /// An EDRM Document representing either a message or an ordinary file.
 class document {

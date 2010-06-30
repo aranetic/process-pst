@@ -2,8 +2,9 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "utilities.h"
 #include "rfc822.h"
+#include "utilities.h"
+#include "document.h"
 
 using namespace std;
 using namespace boost::posix_time;
@@ -113,6 +114,46 @@ void header_should_format_dates() {
            header("Date", from_iso_string("20020131T235959Z")));
 }
 
+void document_to_rfc822_should_include_headers_text_and_html() {
+    document d;
+
+    vector<wstring> from;
+    from.push_back(L"Foo <foo@example.com>");
+    d[L"#From"] = from;
+
+    vector<wstring> to;
+    to.push_back(L"Bar <bar@example.com>");
+    d[L"#To"] = to;
+
+    vector<wstring> cc;
+    cc.push_back(L"Baz <baz@example.com>");
+    cc.push_back(L"Moby <moby@example.com>");
+    d[L"#CC"] = cc;
+
+    vector<wstring> bcc;
+    bcc.push_back(L"Quux <quux@example.com>");
+    d[L"#BCC"] = bcc;
+
+    d[L"#Subject"] = wstring(L"Re: The fridge");
+    d[L"#DateSent"] = from_iso_string("20020131T235959Z");
+
+    // TODO: Text body
+    // TODO: HTML body
+
+    const char *expected =
+        "From: Foo <foo@example.com>\r\n"
+        "Subject: Re: The fridge\r\n"
+        "Date: 31 Jan 2002 23:59:59 GMT\r\n"
+        "To: Bar <bar@example.com>\r\n"
+        "CC: Baz <baz@example.com>,\r\n"
+        "  Moby <moby@example.com>\r\n"
+        "BCC: Quux <quux@example.com>\r\n"
+        "\r\n";
+    ostringstream out;
+    document_to_rfc822(out, d);
+    assert(expected == out.str());
+}
+
 int rfc822_spec(int argc, char **argv) {
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();
@@ -128,7 +169,7 @@ int rfc822_spec(int argc, char **argv) {
     header_should_turn_a_list_of_emails_into_a_structured_header();
     header_should_format_dates();
 
-    //document_to_rfc822_should_include_headers_text_and_html();
+    document_to_rfc822_should_include_headers_text_and_html();
 
     return 0;
 }

@@ -237,14 +237,21 @@ void document_to_rfc822(ostream &out, const document &d) {
         out << "X-Note: See load file metadata for original headers" << crlf;
     out << crlf;
 
+    if (d.has_text()) {
+        out << "--=_boundary" << crlf
+            << "Content-Type: text/plain; charset=UTF-8" << crlf
+            << "Content-Transfer-Encoding: base64" << crlf
+            << crlf
+            << base64_wrapped(wstring_to_utf8(d.text()));
+    }
+
     out << "--=_boundary" << crlf
-        << "Content-Type: text/plain; charset=UTF-8" << crlf
-        << "Content-Transfer-Encoding: base64" << crlf
-        << crlf
-        << "--=_boundary" << crlf
         << "Content-Type: text/html" << crlf
         << "Content-Transfer-Encoding: base64" << crlf
-        << crlf
-        << "--=_boundary--" << crlf;
+        << crlf;
+
+    // TODO: Warn about messages with no text or HTML body.
+
+    out << "--=_boundary--" << crlf;
 }
 

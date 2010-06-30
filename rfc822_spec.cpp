@@ -9,6 +9,11 @@
 using namespace std;
 using namespace boost::posix_time;
 
+const wchar_t *long_wchar_t_string =
+    L"The quick brown fox jumped over the lazy dog\u2014or did she?  "
+    L"The quick brown fox jumped over the lazy dog\u2014or did she?  "
+    L"The quick brown fox jumped over the lazy dog\u2014or did she?";
+
 const char *long_utf8_string =
     "The quick brown fox jumped over the lazy dog\xE2\x80\x94or did she?  "
     "The quick brown fox jumped over the lazy dog\xE2\x80\x94or did she?  "
@@ -154,7 +159,8 @@ void document_to_rfc822_should_include_headers_text_and_html() {
     d[L"#DateSent"] = from_iso_string("20020131T235959Z");
     d[L"#Header"] = wstring(L"Subject: Re: the fridge\r\n");
 
-    // TODO: Text body
+    d.set_text(long_wchar_t_string);
+
     // TODO: HTML body
 
     const char *expected =
@@ -175,6 +181,10 @@ void document_to_rfc822_should_include_headers_text_and_html() {
         "Content-Type: text/plain; charset=UTF-8\r\n"
         "Content-Transfer-Encoding: base64\r\n"
         "\r\n"
+"VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBkb2figJRvciBkaWQg\r\n"
+"c2hlPyAgVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBkb2figJRv\r\n"
+"ciBkaWQgc2hlPyAgVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBk\r\n"
+"b2figJRvciBkaWQgc2hlPw==\r\n"
         "--=_boundary\r\n"
         "Content-Type: text/html\r\n"
         "Content-Transfer-Encoding: base64\r\n"

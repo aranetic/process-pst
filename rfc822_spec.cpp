@@ -96,6 +96,15 @@ void header_should_turn_a_string_into_a_freeform_header() {
     assert("Subject: " + header_encode(wstr) == header("Subject", wstr));
 }
 
+void header_should_turn_a_list_of_emails_into_a_structured_header() {
+    vector<wstring> addresses;
+    addresses.push_back(L"Foo <foo@bar.com>");
+    addresses.push_back(L"\"Foo\u2014Bar\" <foo@bar.com>");
+    assert("To: Foo <foo@bar.com>,\r\n  " +
+           header_encode_email(L"\"Foo\u2014Bar\" <foo@bar.com>") ==
+           header("To", addresses));
+}
+
 int rfc822_spec(int argc, char **argv) {
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();
@@ -108,7 +117,7 @@ int rfc822_spec(int argc, char **argv) {
     header_encode_email_should_encode_special_characters();
 
     header_should_turn_a_string_into_a_freeform_header();
-    //header_should_turn_a_list_of_strings_into_a_structured_header()
+    header_should_turn_a_list_of_emails_into_a_structured_header();
 
     //document_to_rfc822_should_include_headers_text_and_html();
 

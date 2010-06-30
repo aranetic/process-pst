@@ -1,5 +1,6 @@
 #include <cctype>
 #include <algorithm>
+#include <sstream>
 
 #include <boost/foreach.hpp>
 #include <boost/serialization/pfto.hpp>
@@ -155,5 +156,22 @@ string header_encode_email(const wstring &email) {
 /// Encode a freeform header.
 string header(const string &name, const wstring &value) {
     return name + ": " + header_encode(value);
+}
+
+/// Encode a header containing a list of emails.
+string header(const string &name, const vector<wstring> &emails) {
+    if (emails.empty())
+        throw runtime_error("Cannot format empty email list as header");
+    ostringstream out;
+    out << name << ": ";
+    bool first = true;
+    BOOST_FOREACH(const wstring &email, emails) {
+        if (first)
+            first = false;
+        else
+            out << ",\r\n  ";
+        out << header_encode_email(email);
+    }
+    return out.str();
 }
 

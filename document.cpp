@@ -158,6 +158,12 @@ void document::initialize_from_message(const pstsdk::message &m) {
 
     if (has_prop(m, &message::get_body))
         set_text(m.get_body());
+
+    if (props.prop_exists(0x1013)) { // PidTagBodyHtml
+        // This may be either a string or a binary field, but we always read
+        // it as binary.  It appears to be 8-bit data in an unknown encoding.
+        set_html(props.read_prop<vector<byte> >(0x1013));
+    }
 }
 
 document::document(const pstsdk::message &m) {

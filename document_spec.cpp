@@ -223,6 +223,24 @@ void document_from_message_should_extract_text_file() {
     assert(expected == d.text().substr(0, expected.size()));
 }
 
+void document_from_message_should_extract_binary_html() {
+    pst test_pst(L"pstsdk/test/test_unicode.pst");
+    message m(find_by_subject(test_pst, L"Test"));
+    document d(m);
+
+    assert(d.has_html());
+    assert(static_cast<uint8_t>('<') == d.html()[0]);
+}
+
+void document_from_message_should_extract_text_html() {
+    pst test_pst(L"pstsdk/test/test_ansi.pst");
+    message m(find_by_subject(test_pst, L"Post"));
+    document d(m);
+
+    assert(d.has_html());
+    assert(static_cast<uint8_t>('<') == d.html()[0]);
+}
+
 void document_from_attachment_should_fill_in_basic_edrm_data() {
     pst test_pst(L"pstsdk/test/sample1.pst");
     message m(find_by_subject(test_pst, L"Here is a sample message"));
@@ -279,6 +297,8 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_use_subject_as_message_attachment_filename();
     // TODO: EDRM native "file" via reassembly.
     document_from_message_should_extract_text_file();
+    document_from_message_should_extract_binary_html();
+    document_from_message_should_extract_text_html();
 
     document_from_attachment_should_fill_in_basic_edrm_data();
     document_from_attachment_should_extract_native_file();

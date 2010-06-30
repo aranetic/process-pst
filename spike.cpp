@@ -301,9 +301,17 @@ void process_property(const const_property_object *props, size_t level,
             wcout << from_time_t(props->read_time_t_prop(id));
             break;
 
-        case prop_type_binary:
-            wcout << L"(binary data)";
+        case prop_type_binary: {
+            vector<byte> data(props->read_prop<vector<byte> >(id));
+            wcout << hex;
+            vector<byte>::iterator i(data.begin());
+            for (; i != data.end() && i - data.begin() < 25; ++i)
+                wcout << setw(2) << setfill(L'0') << *i;
+            if (i != data.end())
+                wcout << L"...";
+            wcout << dec;
             break;
+        }
 
         default:
             wcout << L"(Unsupported value of type " << type << L")";

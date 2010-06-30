@@ -90,6 +90,12 @@ void header_encode_email_should_encode_special_characters() {
            header_encode_email(L"\"\u2014"));
 }
 
+void header_should_turn_a_string_into_a_freeform_header() {
+    assert("Subject: Re: The fridge" == header("Subject", L"Re: The fridge"));
+    wstring wstr(L"Re: The fridge\u2014it's evil!");
+    assert("Subject: " + header_encode(wstr) == header("Subject", wstr));
+}
+
 int rfc822_spec(int argc, char **argv) {
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();
@@ -101,7 +107,7 @@ int rfc822_spec(int argc, char **argv) {
     header_encode_should_encode_special_characters();
     header_encode_email_should_encode_special_characters();
 
-    //header_should_turn_a_string_into_a_freeform_header()
+    header_should_turn_a_string_into_a_freeform_header();
     //header_should_turn_a_list_of_strings_into_a_structured_header()
 
     //document_to_rfc822_should_include_headers_text_and_html();

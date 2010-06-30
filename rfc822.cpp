@@ -151,3 +151,9 @@ string header_encode_email(const wstring &email) {
     // something more clever with Unicode characters in 'remainder'.
     return header_encode(unquoted_name) + wstring_to_utf8(remainder);
 }
+
+/// Encode a freeform header.
+string header(const string &name, const wstring &value) {
+    return name + ": " + header_encode(value);
+}
+

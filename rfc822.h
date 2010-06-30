@@ -11,6 +11,7 @@ extern std::string base64(const std::string &input);
 extern bool contains_special_characters(const std::string &str);
 extern std::string header_encode(const std::wstring &str);
 extern std::string header_encode_email(const std::wstring &email);
+extern std::string header(const std::string &name, const std::wstring &value);
 
 #endif // RFC822_H
 

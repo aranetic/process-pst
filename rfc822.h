@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace boost { namespace posix_time { class ptime; } }
+
 extern std::wstring rfc822_quote(const std::wstring &str);
 extern std::wstring rfc822_email(const std::wstring &display_name,
                                  const std::wstring &email);
@@ -14,6 +16,8 @@ extern std::string header_encode_email(const std::wstring &email);
 extern std::string header(const std::string &name, const std::wstring &value);
 extern std::string header(const std::string &name,
                           const std::vector<std::wstring> &emails);
+extern std::string header(const std::string &name,
+                          const boost::posix_time::ptime &time);
 
 #endif // RFC822_H
 

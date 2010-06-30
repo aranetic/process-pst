@@ -7,12 +7,15 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "utilities.h"
 #include "rfc822.h"
 
 using namespace std;
 using namespace boost::archive::iterators;
+using namespace boost::posix_time;
+using namespace boost::gregorian;
 
 /// Quote everything except RFC 822 "atom" characters and spaces.  This
 /// is normally used for the human-readable parts of email addresses.
@@ -175,3 +178,11 @@ string header(const string &name, const vector<wstring> &emails) {
     return out.str();
 }
 
+string header(const string &name, const ptime &time) {
+    ostringstream out;
+    date d(time.date());
+    time_duration t(time.time_of_day());
+    out << name << ": " << d.day() << " " << d.month() << " " << d.year()
+        << " " << to_simple_string(time.time_of_day()) << " GMT";
+    return out.str();
+}

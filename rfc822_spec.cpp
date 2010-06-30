@@ -1,9 +1,12 @@
 #include <cassert>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "utilities.h"
 #include "rfc822.h"
 
 using namespace std;
+using namespace boost::posix_time;
 
 void rfc822_quote_should_quote_strings_when_necessary() {
     assert(L"" == rfc822_quote(L""));
@@ -105,6 +108,11 @@ void header_should_turn_a_list_of_emails_into_a_structured_header() {
            header("To", addresses));
 }
 
+void header_should_format_dates() {
+    assert("Date: 31 Jan 2002 23:59:59 GMT" ==
+           header("Date", from_iso_string("20020131T235959Z")));
+}
+
 int rfc822_spec(int argc, char **argv) {
     rfc822_quote_should_quote_strings_when_necessary();
     rfc822_email_should_build_email_addresses();
@@ -118,6 +126,7 @@ int rfc822_spec(int argc, char **argv) {
 
     header_should_turn_a_string_into_a_freeform_header();
     header_should_turn_a_list_of_emails_into_a_structured_header();
+    header_should_format_dates();
 
     //document_to_rfc822_should_include_headers_text_and_html();
 

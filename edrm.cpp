@@ -11,6 +11,7 @@
 #include "document.h"
 #include "edrm.h"
 #include "xml_context.h"
+#include "rfc822.h"
 
 using namespace std;
 using boost::any;
@@ -159,6 +160,14 @@ namespace {
         f.close();
     }
 
+    void output_eml_file(edrm_context &edrm, const document &d) {
+        ostringstream eml;
+        document_to_rfc822(eml, d);
+        string eml_str(eml.str());
+        output_file(edrm, L"Native", d.id() + L".eml",
+                    vector<uint8_t>(eml_str.begin(), eml_str.end()));
+    }
+
     void output_native_file(edrm_context &edrm, const document &d) {
         output_file(edrm, L"Native", native_filename(d), d.native());
     }
@@ -178,10 +187,14 @@ namespace {
             .gt();
 
         x.lt("Files").gt();
-        if (d.has_native())
-            output_native_file(edrm, d);
-        if (d.has_text())
-            output_text_file(edrm, d);
+        if (d.type() == document::message) {
+            output_eml_file(edrm, d);
+        } else {
+            if (d.has_native())
+                output_native_file(edrm, d);
+            if (d.has_text())
+                output_text_file(edrm, d);
+        }
         x.end_tag("Files");
 
         x.lt("Tags").gt();        

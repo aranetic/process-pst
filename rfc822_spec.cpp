@@ -9,6 +9,17 @@
 using namespace std;
 using namespace boost::posix_time;
 
+const char *long_utf8_string =
+    "The quick brown fox jumped over the lazy dog\xE2\x80\x94or did she?  "
+    "The quick brown fox jumped over the lazy dog\xE2\x80\x94or did she?  "
+    "The quick brown fox jumped over the lazy dog\xE2\x80\x94or did she?";
+
+const char *long_utf8_string_base64 =
+"VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBkb2figJRvciBkaWQg\r\n"
+"c2hlPyAgVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBkb2figJRv\r\n"
+"ciBkaWQgc2hlPyAgVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBk\r\n"
+"b2figJRvciBkaWQgc2hlPw==\r\n";
+
 void rfc822_quote_should_quote_strings_when_necessary() {
     assert(L"" == rfc822_quote(L""));
     assert(L"John Smith" == rfc822_quote(L"John Smith"));
@@ -50,6 +61,11 @@ void base64_should_encode_string() {
            base64("The quick brown fox jumped over the lazy dog."));
 
     // TODO: Make sure we encode strings containing internal NULLs.
+}
+
+void base64_wrapped_should_encode_string_with_line_breaks() {
+    assert("YQ==\r\n" == base64_wrapped("a"));
+    assert(long_utf8_string_base64 == base64_wrapped(long_utf8_string));
 }
 
 void contains_special_characters_should_detect_non_ascii_characters() {
@@ -175,6 +191,7 @@ int rfc822_spec(int argc, char **argv) {
     rfc822_email_should_build_email_addresses();
 
     base64_should_encode_string();
+    base64_wrapped_should_encode_string_with_line_breaks();
 
     contains_special_characters_should_detect_non_ascii_characters();
 

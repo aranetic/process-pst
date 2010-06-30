@@ -6,7 +6,6 @@
 #include <boost/serialization/pfto.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "rfc822.h"
@@ -19,6 +18,10 @@ using boost::any_cast;
 using namespace boost::archive::iterators;
 using namespace boost::posix_time;
 using namespace boost::gregorian;
+
+namespace {
+    const char *crlf("\r\n");
+}
 
 /// Quote everything except RFC 822 "atom" characters and spaces.  This
 /// is normally used for the human-readable parts of email addresses.
@@ -85,7 +88,6 @@ namespace {
     // http://www.boost.org/doc/libs/1_42_0/libs/serialization/doc/dataflow.html
     typedef transform_width<const char *, 6, 8> break_into_6bit_chunks;
     typedef base64_from_binary<break_into_6bit_chunks> base64_iterator;
-    typedef insert_linebreaks<base64_iterator, 72> base64_lines_iterator;
 }
 
 /// Encode a string using Base64.
@@ -103,6 +105,27 @@ string base64(const string &input) {
         output += "==";
     else if (leftover_bits == 2)
         output += "=";
+
+    return output;
+}
+
+/// Encode a string using Base64, inserting CRLF linebreaks every 72
+/// characters.  Note we don't use insert_linebreaks from boost, because it
+/// just inserts regular newlines.
+string base64_wrapped(const string &input) {
+    string encoded(base64(input));
+    string output;
+
+    string::difference_type max_line_length = 72;
+    string::iterator i(encoded.begin());
+    while (encoded.end() - i > max_line_length) {
+        copy(i, i + max_line_length,
+             insert_iterator<string>(output, output.end()));
+        output += crlf;
+        i += max_line_length;
+    }
+    copy(i, encoded.end(), insert_iterator<string>(output, output.end()));
+    output += crlf;
 
     return output;
 }
@@ -189,10 +212,6 @@ string header(const string &name, const ptime &time) {
     out << name << ": " << d.day() << " " << d.month() << " " << d.year()
         << " " << to_simple_string(time.time_of_day()) << " GMT";
     return out.str();
-}
-
-namespace {
-    const char *crlf("\r\n");
 }
 
 /// Convert a document into an RFC822-format email message.

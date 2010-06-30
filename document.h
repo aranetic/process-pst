@@ -31,6 +31,8 @@ private:
     std::vector<uint8_t> m_native;
     bool m_has_text;
     std::wstring m_text;
+    bool m_has_html;
+    std::vector<uint8_t> m_html;
 
     void initialize_fields();
     void initialize_from_message(const pstsdk::message &m);
@@ -59,13 +61,14 @@ public:
     tag_iterator tag_begin() const { return m_tags.begin(); }
     tag_iterator tag_end() const { return m_tags.end(); }
 
-    /// Set the plain text associated with this document.
+    /// Set the native file associated with this document.
     void set_native(const std::vector<uint8_t> &native);
 
-    /// Does this document have associated plain text?
+    /// Does this document have an associated native file?
     bool has_native() const { return m_has_native; }
 
     /// The native file associated with this document.
+    /// \pre has_native() == true
     const std::vector<uint8_t> &native() const { return m_native; }
 
     /// Set the plain text associated with this document.
@@ -77,6 +80,16 @@ public:
     /// The plain text associated with this document.
     /// \pre has_text() == true
     const std::wstring &text() const { return m_text; }
+
+    /// Set the HTML associated with this document.
+    void set_html(const std::vector<uint8_t> &html);
+
+    /// Does this document have associated HTML?
+    bool has_html() const { return m_has_html; }
+
+    /// An HTML representation of this document.
+    /// \pre has_html() == true
+    const std::vector<uint8_t> &html() const { return m_html; }
 };
 
 #endif // DOCUMENT_H

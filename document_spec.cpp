@@ -35,6 +35,7 @@ void document_should_have_a_zero_arg_constructor() {
     assert(document::unknown == d.type());
     assert(!d.has_native());
     assert(!d.has_text());
+    assert(!d.has_html());
 }
 
 void document_should_have_an_id_a_type_and_a_content_type() {
@@ -47,11 +48,12 @@ void document_should_have_an_id_a_type_and_a_content_type() {
     assert(L"message/rfc822" == d.content_type());
 }
 
-void document_should_have_native_and_text_fields() {
+void document_should_have_native_text_and_html_fields() {
     document d;
 
     string data_str("Data");
     vector<uint8_t> data(data_str.begin(), data_str.end());
+
     d.set_native(data);
     assert(d.has_native());
     assert(data == d.native());
@@ -59,6 +61,10 @@ void document_should_have_native_and_text_fields() {
     d.set_text(L"Hello!");
     assert(d.has_text());
     assert(L"Hello!" == d.text());
+
+    d.set_html(data);
+    assert(d.has_html());
+    assert(data == d.html());
 }
 
 void document_should_be_able_to_translate_type_to_string() {
@@ -256,7 +262,7 @@ void document_from_attachment_should_recognize_submessage_attachment() {
 int document_spec(int argc, char **argv) {
     document_should_have_a_zero_arg_constructor();
     document_should_have_an_id_a_type_and_a_content_type();
-    document_should_have_native_and_text_fields();
+    document_should_have_native_text_and_html_fields();
 
     document_tags_should_be_accessible_using_subscript_operator();
     document_tags_should_default_to_boost_any_empty();

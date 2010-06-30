@@ -71,6 +71,7 @@ void document::initialize_fields() {
     m_type = unknown;
     m_has_text = false;
     m_has_native = false;
+    m_has_html = false;
 }
 
 void document::initialize_from_message(const pstsdk::message &m) {
@@ -215,4 +216,9 @@ void document::set_native(const vector<uint8_t> &native) {
 void document::set_text(const wstring &text) {
     m_has_text = true;
     m_text = text;
+}
+
+void document::set_html(const vector<uint8_t> &html) {
+    m_has_html = true;
+    m_html = html;
 }

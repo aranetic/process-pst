@@ -136,6 +136,7 @@ void document_to_rfc822_should_include_headers_text_and_html() {
 
     d[L"#Subject"] = wstring(L"Re: The fridge");
     d[L"#DateSent"] = from_iso_string("20020131T235959Z");
+    d[L"#Header"] = wstring(L"Subject: Re: the fridge\r\n");
 
     // TODO: Text body
     // TODO: HTML body
@@ -148,6 +149,9 @@ void document_to_rfc822_should_include_headers_text_and_html() {
         "CC: Baz <baz@example.com>,\r\n"
         "  Moby <moby@example.com>\r\n"
         "BCC: Quux <quux@example.com>\r\n"
+        "X-Note: Exported from PST by"
+        " http://github.com/aranetic/process-pst\r\n"
+        "X-Note: See load file metadata for original headers\r\n"
         "\r\n";
     ostringstream out;
     document_to_rfc822(out, d);

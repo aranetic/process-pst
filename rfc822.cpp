@@ -245,10 +245,14 @@ void document_to_rfc822(ostream &out, const document &d) {
             << base64_wrapped(wstring_to_utf8(d.text()));
     }
 
-    out << "--=_boundary" << crlf
-        << "Content-Type: text/html" << crlf
-        << "Content-Transfer-Encoding: base64" << crlf
-        << crlf;
+    if (d.has_html()) {
+        string html(d.html().begin(), d.html().end());
+        out << "--=_boundary" << crlf
+            << "Content-Type: text/html" << crlf
+            << "Content-Transfer-Encoding: base64" << crlf
+            << crlf
+            << base64_wrapped(html);
+    }
 
     // TODO: Warn about messages with no text or HTML body.
 

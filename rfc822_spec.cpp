@@ -162,6 +162,8 @@ void document_to_rfc822_should_include_headers_text_and_html() {
     d.set_text(long_wchar_t_string);
 
     // TODO: HTML body
+    string html("<p>The quick brown fox jumped over the lazy dog.</p>");
+    d.set_html(vector<uint8_t>(html.begin(), html.end()));
 
     const char *expected =
         "From: Foo <foo@example.com>\r\n"
@@ -189,6 +191,7 @@ void document_to_rfc822_should_include_headers_text_and_html() {
         "Content-Type: text/html\r\n"
         "Content-Transfer-Encoding: base64\r\n"
         "\r\n"
+"PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wZWQgb3ZlciB0aGUgbGF6eSBkb2cuPC9wPg==\r\n"
         "--=_boundary--\r\n";
     
     ostringstream out;

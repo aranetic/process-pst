@@ -59,11 +59,17 @@ public:
     tag_iterator tag_begin() const { return m_tags.begin(); }
     tag_iterator tag_end() const { return m_tags.end(); }
 
+    /// Set the plain text associated with this document.
+    void set_native(const std::vector<uint8_t> &native);
+
     /// Does this document have associated plain text?
     bool has_native() const { return m_has_native; }
 
     /// The native file associated with this document.
     const std::vector<uint8_t> &native() const { return m_native; }
+
+    /// Set the plain text associated with this document.
+    void set_text(const std::wstring &text);
 
     /// Does this document have associated plain text?
     bool has_text() const { return m_has_text; }

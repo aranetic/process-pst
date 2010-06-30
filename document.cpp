@@ -155,14 +155,8 @@ void document::initialize_from_message(const pstsdk::message &m) {
         (*this)[L"#FlagStatus"] =
             lexical_cast<wstring>(props.read_prop<int32_t>(0x1090));
 
-    if (has_prop(m, &message::get_body)) {
-        // TODO: Do we want to merge in some of our headers here?  Ideally,
-        // we'd also so something about text bodies that have no relation
-        // to the HTML/RTF body, but that will require enormously more
-        // code.
-        m_has_text = true;
-        m_text = m.get_body();
-    }
+    if (has_prop(m, &message::get_body))
+        set_text(m.get_body());
 }
 
 document::document(const pstsdk::message &m) {
@@ -184,8 +178,7 @@ document::document(const pstsdk::attachment &a) {
             extension = filename.substr(dotpos + 1, wstring::npos);
  
         // Extract the native file.
-        m_has_native = true;
-        m_native = a.get_bytes();
+        set_native(a.get_bytes());
 
         (*this)[L"#FileName"] = filename;
         (*this)[L"#FileExtension"] = extension;
@@ -212,4 +205,14 @@ const any document::operator[](const wstring &key) const {
         return any();
     else
         return found->second;
+}
+
+void document::set_native(const vector<uint8_t> &native) {
+    m_has_native = true;
+    m_native = native;
+}
+
+void document::set_text(const wstring &text) {
+    m_has_text = true;
+    m_text = text;
 }

@@ -2,8 +2,8 @@
 
 Copyright (c) 2010 Aranetic LLC.
 
-This repository will eventually contain a command-line tool which does
-basic, first-pass processing for PST files.
+process-pst is a command-line tool that does basic, first-pass processing
+for PST files.
 
     process-pst custodian1.pst custodian1
 
@@ -73,7 +73,7 @@ created using Amazon's EC2 service and the 32-bit ami-2d4aa444.
 First, set up your system with the necessary compilers, libraries and gems:
 
     sudo apt-get install cmake g++-4.4 ruby ruby-dev build-essential \
-      libxml2-dev libxslt-dev
+      libxml2-dev libxslt-dev git-core
     wget http://production.cf.rubygems.org/rubygems/rubygems-1.3.7.tgz
     tar xzf rubygems-1.3.7.tgz
     (cd rubygems-1.3.7 && sudo ruby setup.rb)
@@ -105,6 +105,6 @@ Then, install the necessary Ruby gems and build using CMake:
 
 You can run the unit tests using CMake:
 
-   CTEST_OUTPUT_ON_FAILURE=1 make test
+    CTEST_OUTPUT_ON_FAILURE=1 make test
 
 All the tests should pass.

@@ -2,6 +2,7 @@
 //
 // process-pst: Convert PST files to RCF822 *.eml files and load files
 // Copyright (c) 2010 Aranetic LLC
+// Look for the latest version at http://github.com/aranetic/process-pst
 //
 // This program is free software: you can redistribute it and/or modify it
 // under the terms of the GNU Affero General Public License (the "License")

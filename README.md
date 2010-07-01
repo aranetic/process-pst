@@ -74,13 +74,15 @@ First, set up your system with the necessary compilers, libraries and gems:
 
     sudo apt-get install cmake g++-4.4 ruby ruby-dev build-essential \
       libxml2-dev libxslt-dev
-    tar xzvf rubygems-1.3.7.tgz
+    wget http://production.cf.rubygems.org/rubygems/rubygems-1.3.7.tgz
+    tar xzf rubygems-1.3.7.tgz
     (cd rubygems-1.3.7 && sudo ruby setup.rb)
+    sudo gem1.8 install bundler -v 0.9.26
 
 Boost must be installed manually:
 
     wget http://downloads.sourceforge.net/project/boost/boost/1.42.0/boost_1_42_0.tar.gz?use_mirror=voxel
-    tar xzvf boost_1_42_0.tar.gz
+    tar xzf boost_1_42_0.tar.gz
     cd boost_1_42_0
     ./bootstrap.sh --prefix=/opt/boost
     ./bjam

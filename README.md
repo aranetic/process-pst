@@ -47,4 +47,62 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Compiling
 
-Build notes will go here...
+process-pst uses CMake to manage the build process.
+
+### Mac
+
+First, use MacPorts to install Boost 1.42, GCC 4.4, CMake 2.8 and iconv:
+
+    sudo port install boost @1.42.0
+    sudo port install gcc44 cmake libiconv
+
+To run the unit tests, you will also want to install Ruby, rubygems, and
+bundler.
+
+Then, install the necessary Ruby gems and build using CMake:
+
+    bundle install
+    CC=gcc-mp-4.4 CXX=g++-mp-4.4 cmake .
+    make
+
+### Linux
+
+These instructions have been tested on a pristine Ubuntu 10.04 system
+created using Amazon's EC2 service and the 32-bit ami-2d4aa444.
+
+First, set up your system with the necessary compilers, libraries and gems:
+
+    sudo apt-get install cmake g++-4.4 ruby ruby-dev build-essential \
+      libxml2-dev libxslt-dev
+    tar xzvf rubygems-1.3.7.tgz
+    (cd rubygems-1.3.7 && sudo ruby setup.rb)
+
+Boost must be installed manually:
+
+    wget http://downloads.sourceforge.net/project/boost/boost/1.42.0/boost_1_42_0.tar.gz?use_mirror=voxel
+    tar xzvf boost_1_42_0.tar.gz
+    cd boost_1_42_0
+    ./bootstrap.sh --prefix=/opt/boost
+    ./bjam
+    sudo ./bjam install
+    cd ..
+
+Next, check out process-pst:
+
+    git clone git://github.com/aranetic/process-pst.git
+    cd process-pst
+    git submodule update --init
+
+Then, install the necessary Ruby gems and build using CMake:
+
+    bundle install
+    CC=gcc-4.4 CXX=g++-4.4 cmake -D BOOST_ROOT=/opt/boost .
+    make
+
+## Running the unit tests
+
+You can run the unit tests using CMake:
+
+   CTEST_OUTPUT_ON_FAILURE=1 make test
+
+All the tests should pass.

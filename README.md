@@ -84,7 +84,7 @@ Boost must be installed manually:
     wget http://downloads.sourceforge.net/project/boost/boost/1.42.0/boost_1_42_0.tar.gz?use_mirror=voxel
     tar xzf boost_1_42_0.tar.gz
     cd boost_1_42_0
-    ./bootstrap.sh --prefix=/opt/boost
+    ./bootstrap.sh --prefix=/opt/boost --without-libraries=python
     ./bjam
     sudo ./bjam install
     cd ..

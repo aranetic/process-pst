@@ -42,6 +42,12 @@ if(ICONV_LIBRARY)
   target_link_libraries(process-pst ${ICONV_LIBRARY})
 endif()
 
+# Install our process-pst executable.
+install(TARGETS process-pst
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+
 
 #--------------------------------------------------------------------------
 #  C++ module tests

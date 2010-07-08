@@ -203,8 +203,10 @@ namespace {
 
         x.lt("Document")
             .attr("DocID", d.id())
-            .attr("DocType", d.type_string())
-            .gt();
+            .attr("DocType", d.type_string());
+        if (d.content_type() != L"")
+            x.attr("MimeType", d.content_type());
+        x.gt();
 
         x.lt("Files").gt();
         if (d.type() == document::message) {

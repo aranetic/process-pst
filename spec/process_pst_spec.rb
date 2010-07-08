@@ -117,5 +117,9 @@ describe "process-pst" do
       File.exist?(path).should == true
       File.size(path).should == 15
     end
+
+    it "should include MIME types for attachments" do
+      xpath("//Document[@DocID='d0000004'][@MimeType='text/plain']") { true }
+    end
   end
 end

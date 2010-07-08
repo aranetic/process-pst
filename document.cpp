@@ -196,6 +196,7 @@ document::document(const pstsdk::attachment &a) {
     if (a.is_message()) {
         initialize_from_message(a.open_as_message());
     } else {
+        property_bag props(a.get_property_bag());
         set_type(document::file);
     
         wstring filename(a.get_filename());
@@ -207,6 +208,8 @@ document::document(const pstsdk::attachment &a) {
         // Extract the native file.
         set_native(a.get_bytes());
 
+        if (props.prop_exists(0x370e)) // PidTagAttachMimeTag
+            set_content_type(props.read_prop<wstring>(0x370e));
         (*this)[L"#FileName"] = filename;
         (*this)[L"#FileExtension"] = extension;
         (*this)[L"#FileSize"] = int64_t(native().size());

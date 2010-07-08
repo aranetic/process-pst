@@ -268,12 +268,23 @@ void document_from_attachment_should_fill_in_basic_edrm_data() {
 
     // DocId
     assert(document::file == d.type());
-    // MimeType
+    assert(L"" == d.content_type()); // No MIME types in this file.
     assert(L"leah_thumper.jpg" == any_cast<wstring>(d[L"#FileName"]));
     assert(L"jpg" == any_cast<wstring>(d[L"#FileExtension"]));
     assert(93142 == any_cast<int64_t>(d[L"#FileSize"]));
     // Unsupported: #DateCreated, #DateAccessed, #DateModified, #DatePrinted
     // (plus Microsoft Office metadata, but that's not our problem for now)
+}
+
+void document_from_attachment_should_include_mime_type() {
+    // We have to dig around to find an attachment with this field.
+    pst test_pst(L"test_data/four_nesting_levels.pst");
+    message m1(find_by_subject(test_pst, L"Outermost message"));
+    message m2(m1.attachment_begin()->open_as_message());
+    message m3(m2.attachment_begin()->open_as_message());
+    document d(*m3.attachment_begin());
+    
+    assert(L"text/plain" == d.content_type());
 }
 
 void document_from_attachment_should_extract_native_file() {
@@ -321,6 +332,7 @@ int document_spec(int argc, char **argv) {
     document_from_message_should_extract_text_html();
 
     document_from_attachment_should_fill_in_basic_edrm_data();
+    document_from_attachment_should_include_mime_type();
     document_from_attachment_should_extract_native_file();
     document_from_attachment_should_recognize_submessage_attachment();
     

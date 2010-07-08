@@ -95,6 +95,7 @@ prop_id_name_info prop_name_map[] = {
     { 0x0e1f, L"PidTagRtfInSync" },
     { 0x0e23, L"PidTagInternetArticleNumber" },
     { 0x0e27, L"PidTagSecurityDescriptor" },
+    { 0x0e20, L"PidTagAttachSize" },
     { 0x0e2b, L"PidTagToDoItemFlags" },
     //{ 0x0e2f, L"" },
     { 0x0e79, L"PidTagTrustSender" },
@@ -121,6 +122,17 @@ prop_id_name_info prop_name_map[] = {
     //{ 0x3014, L"" },
     //{ 0x3015, L"" },
     { 0x3016, L"PidTagConversationIndexTracking" },
+    // If 0x3701 has type 0x000d, then it's PidTagAttachDataObject instead.
+    { 0x3701, L"PidTagAttachDataBinary" },
+    { 0x3702, L"PidTagAttachEncoding" },
+    { 0x3704, L"PidTagAttachFilename" },
+    { 0x3705, L"PidTagAttachMethod" },
+    { 0x3707, L"PidTagAttachLongFilename" },
+    { 0x370a, L"PidTagAttachTag" },
+    { 0x370b, L"PidTagRenderingPosition" },
+    { 0x370e, L"PidTagAttachMimeTag" },
+    { 0x370f, L"PidTagAttachAdditionalInformation" },
+    //{ 0x3710, L"" },
     { 0x3900, L"PidTagDisplayType" },
     { 0x3905, L"PidTagDisplayTypeEx" },
     { 0x39fe, L"PidTagPrimarySmtpAddress" },
@@ -163,6 +175,7 @@ prop_id_name_info prop_name_map[] = {
     //{ 0x6619, L"" },  // Not PidTagUserEntryId, I don't think.
     //{ 0x67f2, L"" },
     //{ 0x67f3, L"" },
+    //{ 0x6909, L"" },
 
     { 0, NULL }
 };
@@ -365,6 +378,7 @@ void process_attachment(const attachment &a) {
           << prop_or(a, &attachment::size, 31337) << " bytes)"
           << (a.is_message() ? " SUBMESSAGE" : "")
           << endl;
+    process_properties(&a.get_property_bag(), 2);
 }
 
 void process_message(const message &m) {

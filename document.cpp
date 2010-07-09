@@ -176,6 +176,9 @@ void document::initialize_from_message(const pstsdk::message &m) {
         (*this)[L"#FlagStatus"] =
             lexical_cast<wstring>(props.read_prop<int32_t>(0x1090));
 
+    if (props.prop_exists(0x1035)) // PidTagInternetMessageId
+        (*this)[L"#MessageID"] =  props.read_prop<wstring>(0x1035);
+
     if (has_prop(m, &message::get_body))
         set_text(m.get_body());
 

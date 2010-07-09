@@ -98,7 +98,10 @@ prop_id_name_info prop_name_map[] = {
     { 0x0e20, L"PidTagAttachSize" },
     { 0x0e2b, L"PidTagToDoItemFlags" },
     //{ 0x0e2f, L"" },
+    { 0x0e34, L"PidTagReplVersionHistory" },
+    { 0x0e38, L"PidTagReplFlags" },
     { 0x0e79, L"PidTagTrustSender" },
+    { 0x0FF9, L"PidTagRecordKey" },
     { 0x0ffe, L"PidTagObjectType" },
     { 0x0fff, L"PidTagEntryId" },
     { 0x1000, L"PidTagBody" },
@@ -122,6 +125,11 @@ prop_id_name_info prop_name_map[] = {
     //{ 0x3014, L"" },
     //{ 0x3015, L"" },
     { 0x3016, L"PidTagConversationIndexTracking" },
+    //{ 0x3416, L"" },
+    //{ 0x35df, L"" },
+    //{ 0x35e0, L"" },
+    //{ 0x35e3, L"" },
+    //{ 0x35e7, L"" },
     // If 0x3701 has type 0x000d, then it's PidTagAttachDataObject instead.
     { 0x3701, L"PidTagAttachDataBinary" },
     { 0x3702, L"PidTagAttachEncoding" },
@@ -173,8 +181,11 @@ prop_id_name_info prop_name_map[] = {
     { 0x65e3, L"PidTagPredecessorChangeList" },
     //{ 0x6610, L"" },
     //{ 0x6619, L"" },  // Not PidTagUserEntryId, I don't think.
+    { 0x6633, L"PidTagPstLrNoRestrictions" },
+    { 0x66fa, L"PidTagLatestPstEnsure" },
     //{ 0x67f2, L"" },
     //{ 0x67f3, L"" },
+    { 0x67ff, L"PidTagPstPassword" },
     //{ 0x6909, L"" },
 
     { 0, NULL }
@@ -410,6 +421,7 @@ int main(int argc, char **argv) {
         string pst_path(argv[i]);
         pst pst_db(string_to_wstring(pst_path));
         g_db = pst_db.get_db();
+        process_properties(&pst_db.get_property_bag(), 0);
         process_folder(pst_db.open_root_folder());
         g_db.reset();
     }

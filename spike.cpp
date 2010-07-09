@@ -369,6 +369,18 @@ void process_properties(const const_property_object *props, size_t level) {
     for_each(ids.begin(), ids.end(), bind(process_property, props, level, _1));
 }
 
+void process_node_properties(const property_bag *props, size_t level) {
+    for (size_t i = 0; i < level; ++i)
+        wcout << L"  ";
+    wcout << L"PidTagEntryId(*): " << hex;
+    vector<byte> entry_id(props->get_entry_id());
+    vector<byte>::iterator i(entry_id.begin());
+    for (; i != entry_id.end(); ++i)
+        wcout << setw(2) << setfill(L'0') << *i;
+    wcout << dec << endl;
+    process_properties(props, level);
+}
+
 void process_recipient(const recipient &r) {
     wcout << "  ";
     switch (prop_or(r, &recipient::get_type, recipient_type(0))) {
@@ -389,7 +401,7 @@ void process_attachment(const attachment &a) {
           << prop_or(a, &attachment::size, 31337) << " bytes)"
           << (a.is_message() ? " SUBMESSAGE" : "")
           << endl;
-    process_properties(&a.get_property_bag(), 2);
+    process_node_properties(&a.get_property_bag(), 2);
 }
 
 void process_message(const message &m) {
@@ -400,7 +412,7 @@ void process_message(const message &m) {
     if (m.get_attachment_count() > 0)
         for_each(m.attachment_begin(), m.attachment_end(), process_attachment);
 
-    process_properties(&m.get_property_bag(), 1);
+    process_node_properties(&m.get_property_bag(), 1);
 }
 
 void process_folder(const folder &f) {

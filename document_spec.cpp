@@ -165,13 +165,27 @@ void document_from_message_should_fill_in_basic_edrm_data() {
     assert(d[L"#FlagStatus"].empty());
 }
 
-void document_from_message_should_fill_in_nonstandard_edrm_data() {
+void document_from_message_should_fill_in_message_id() {
     pst test_pst(L"test_data/four_nesting_levels.pst");
     message m(find_by_subject(test_pst, L"Outermost message"));
     document d(m);
     
+    // Non-standard EDRM tag.
     assert(L"<004701cb16cf$2a5fe4c0$7f1fae40$@aranetic.com>" ==
            any_cast<wstring>(d[L"#MessageID"]));
+}
+
+void document_from_message_should_fill_in_mapi_entry_id() {
+    pst test_pst(L"pstsdk/test/sample1.pst");
+    message m(find_by_subject(test_pst, L"Here is a sample message"));
+    document d(m);
+    document a(*m.attachment_begin());
+
+    // Non-standard EDRM tag.
+    assert(L"000000006a552b813c43f94384f18b7da2393e9500200024" ==
+           any_cast<wstring>(d[L"#EntryID"]));
+    assert(L"000000006a552b813c43f94384f18b7da2393e9500008025" ==
+           any_cast<wstring>(a[L"#EntryID"]));
 }
 
 void document_from_message_should_handle_alternative_smtp_recipient_info() {
@@ -327,7 +341,8 @@ int document_spec(int argc, char **argv) {
     document_tags_should_support_iteration();
 
     document_from_message_should_fill_in_basic_edrm_data();
-    document_from_message_should_fill_in_nonstandard_edrm_data();
+    document_from_message_should_fill_in_message_id();
+    document_from_message_should_fill_in_mapi_entry_id();
     // Add PidTagSentRepresenting* fields to #From?
     document_from_message_should_handle_alternative_smtp_recipient_info();
     document_from_message_should_handle_various_recipient_types();

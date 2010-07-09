@@ -179,6 +179,10 @@ void document::initialize_from_message(const pstsdk::message &m) {
     if (props.prop_exists(0x1035)) // PidTagInternetMessageId
         (*this)[L"#MessageID"] =  props.read_prop<wstring>(0x1035);
 
+    if (has_prop(m, &message::get_entry_id))
+        (*this)[L"#EntryID"] =
+            string_to_wstring(bytes_to_hex_string(m.get_entry_id()));
+
     if (has_prop(m, &message::get_body))
         set_text(m.get_body());
 
@@ -216,6 +220,10 @@ document::document(const pstsdk::attachment &a) {
         (*this)[L"#FileName"] = filename;
         (*this)[L"#FileExtension"] = extension;
         (*this)[L"#FileSize"] = int64_t(native().size());
+
+        if (has_prop(a, &attachment::get_entry_id))
+            (*this)[L"#EntryID"] =
+                string_to_wstring(bytes_to_hex_string(a.get_entry_id()));
     }
 }
 

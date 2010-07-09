@@ -105,6 +105,15 @@ string wstring_to_utf8(const wstring &wstr) {
     return string(utf8.begin(), utf8.begin() + output_size);
 }
 
+string bytes_to_hex_string(const vector<uint8_t> &v) {
+   // Convert to hexadecimal string.
+    ostringstream out;
+    out << hex;
+    for (size_t i = 0; i < v.size(); ++i)
+        out << setw(2) << setfill('0') << uint32_t(v[i]);
+    return out.str();
+}
+
 string md5(const vector<uint8_t> &v) {
     // Calculate the MD5 sum.
     md5_state_s pms;
@@ -113,11 +122,8 @@ string md5(const vector<uint8_t> &v) {
     md5_byte_t digest[16];
     md5_finish(&pms, digest);
 
-    // Convert to hexadecimal string.
-    ostringstream out;
-    for (size_t i = 0; i < 16; i++)
-        out << hex << setw(2) << setfill('0') << uint32_t(digest[i]);
-    return out.str();
+    vector<uint8_t> digest_vector(digest, digest + 16);
+    return bytes_to_hex_string(digest_vector);
 }
 
 /// Convert a string to UTF-8 and escape any XML metacharacters.

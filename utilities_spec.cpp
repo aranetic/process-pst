@@ -40,6 +40,13 @@ void wstring_to_utf8_should_convert_to_utf8() {
     assert("\xE2\x80\x94" == wstring_to_utf8(L"\u2014")); // em-dash
 }
 
+void bytes_to_hex_string_should_convert_vector_to_hex() {
+    vector<uint8_t> v;
+    v.push_back(0);
+    v.push_back(255);
+    assert("00ff" == bytes_to_hex_string(v));
+}
+
 void md5_should_calculate_md5_hash_for_vector() {
     string s("Data");
     vector<uint8_t> v(s.begin(), s.end());
@@ -59,6 +66,7 @@ int utilities_spec(int argc, char **argv) {
 
     wstring_to_utf8_should_convert_to_utf8();
 
+    bytes_to_hex_string_should_convert_vector_to_hex();
     md5_should_calculate_md5_hash_for_vector();
 
     xml_quote_should_convert_wstring_and_escape_metacharacters();

@@ -45,6 +45,12 @@ details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+## Downloading the source code
+
+    git clone http://github.com/aranetic/process-pst.git
+    cd process-pst
+    git submodule update --init
+
 ## Compiling
 
 process-pst uses CMake to manage the build process.

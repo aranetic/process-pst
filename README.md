@@ -45,6 +45,12 @@ details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+## Downloading the source code
+
+    git clone http://github.com/aranetic/process-pst.git
+    cd process-pst
+    git submodule update --init
+
 ## Compiling
 
 process-pst uses CMake to manage the build process.
@@ -59,11 +65,26 @@ First, use MacPorts to install Boost 1.42, GCC 4.4, CMake 2.8 and iconv:
 To run the unit tests, you will also want to install Ruby, rubygems, and
 bundler.
 
+On 10.6, gcc44 (as of 13 Jul 2010) currently inappropriately builds/installs
+libgcc_s, see https://trac.macports.org/attachment/ticket/25042/email1.eml.
+Move these out of the way:
+
+    sudo mkdir /opt/local/lib/gcc44/hidden
+    sudo mv /opt/local/lib/gcc44/libgcc_s* /opt/local/lib/gcc44/hidden/
+
 Then, install the necessary Ruby gems and build using CMake:
 
     bundle install
     CC=gcc-mp-4.4 CXX=g++-mp-4.4 cmake .
     make
+
+cmake may also find the system libiconv instead of the MacPorts one, and
+fail to link.  If so, replace the ICONV_LIBRARY line in CMakeCache.txt
+with one pointing at MacPorts, as follows:
+
+    ICONV_LIBRARY:FILEPATH=/opt/local/lib/libiconv.dylib
+
+and rerun the cmake to regenerate the build files, and make again.
 
 ### Linux
 
